@@ -3,6 +3,28 @@
    Design system shared with the Custom Web Design page:
    https://imageworksc.github.io/Custom-Web-Design/
    Single light theme. No dark mode — the brand commits to one visual world.
+
+   CONTENTS
+     1. Tokens
+     2. Scale — one layout from phones to 5K
+     3. Base
+     4. Layout — wrap, bands, stack, utilities
+     5. Type components
+     6. Buttons
+     7. Hero
+     8. The year — the hero figure
+     9. Changelog — the deep band
+    10. Hour tiers
+    11. Program cards
+    12. Closing CTA
+    13. Reveal and shared keyframes
+    14. Responsive — tablet down to the smallest phones
+    15. Reduced motion
+    16. Print
+
+   Units: every length is in rem so the whole page follows the root size set
+   in section 2. Only three things stay in px on purpose — 1px hairlines,
+   the 1px dots of the band patterns, and the media-query breakpoints.
    ========================================================================== */
 
 @font-face {
@@ -13,6 +35,9 @@
   src: url(fonts/plus-jakarta-sans-latin.woff2) format('woff2');
 }
 
+/* --------------------------------------------------------------------------
+   1. TOKENS
+   -------------------------------------------------------------------------- */
 :root {
   color-scheme: light;
 
@@ -20,61 +45,71 @@
   --navy: #143c66;
   --blue: #1266b5;
   --green: #80c34a;
-  --green-ink: #5c9a2e;          /* green for text and links */
+  --green-ink: #5c9a2e;          /* green for text and small labels */
   --ink: #1f2b3e;                /* body copy */
   --muted: #5a6b82;
   --faint: #7d8ea1;
-  --nav-ink: #3d464d;
 
   /* ---- surfaces ---- */
   --white: #ffffff;
   --band-tint: #f2f5f9;
-  --band-tint-warm: #f1f3f6;
   --card-top: #ffffff;
   --card-bottom: #fcfdff;
   --border: #e3eaf3;
   --border-soft: #eef2f7;
   --chip-blue: #c1daff;
-  --chip-navy: rgba(24, 73, 125, .14);
   --tint-green: #eef6e6;
   --tint-blue: #e5edf7;
   --grey-soft: #e8edf4;
-  --grey-ink: #4f5f77;
 
-  /* ---- the CTA band ---- */
+  /* ---- the closing band ---- */
   --cta-band: linear-gradient(135deg, #1266b5, #0a2c4d);
 
   /* ---- shape: corners squared at 2px ---- */
-  --r: 2px;
+  --r: .125rem;
 
-  --shadow-card: 0 1px 3px rgba(20, 40, 80, .08), 0 14px 34px rgba(20, 40, 80, .1);
-  --shadow-lift: 0 4px 12px rgba(20, 40, 80, .18);
-  --ring: 0 0 0 3px rgba(128, 195, 74, .5), 0 0 0 1px rgba(20, 60, 102, .55);
+  --shadow-card: 0 .0625rem .1875rem rgba(20, 40, 80, .08), 0 .875rem 2.125rem rgba(20, 40, 80, .1);
+  --shadow-lift: 0 .25rem .75rem rgba(20, 40, 80, .18);
+  --ring: 0 0 0 .1875rem rgba(128, 195, 74, .5), 0 0 0 1px rgba(20, 60, 102, .55);
 
   /* ---- rhythm ---- */
-  --shell: 1180px;
-  --gutter: clamp(22px, 4vw, 40px);
-  --band-y: clamp(64px, 8vw, 108px);
+  --shell: 73.75rem;                          /* 1180px at the base size */
+  --gutter: clamp(1.375rem, 4vw, 2.5rem);
+  --band-y: clamp(4rem, 8vw, 6.75rem);
   --measure: 66ch;
-  --anchor-offset: 24px;
+  --anchor-offset: 1.5rem;
 
   /* ---- type scale ---- */
-  --step--1: 13px;
-  --step-0: 16px;
-  --step-1: 17px;
-  --step-3: clamp(26px, 3vw, 38px);
+  --step--1: .8125rem;                        /* 13px  small labels */
+  --step-0: 1rem;                             /* 16px  body */
+  --step-1: 1.0625rem;                        /* 17px  leads, card copy */
+  --step-3: clamp(1.625rem, 3vw, 2.375rem);   /* 26–38px  h2 */
 
   --ease: cubic-bezier(.16, .84, .44, 1);
 }
 
 /* --------------------------------------------------------------------------
-   BASE
+   2. SCALE
+   1rem is the visitor's default size (16px) up to a 1920×1080 viewport. Past
+   that the root grows with the smaller of the two viewport dimensions, so a
+   4K screen (3840×2160) draws the page at exactly 2× and a 5K screen
+   (5120×2880) at 2.67× — the same layout a full-HD monitor shows, only
+   sharper. Taking the smaller dimension keeps ultrawide monitors sane: a
+   3440×1440 screen scales by its height (1.33×), not its width (1.79×).
+   Phones and laptops never reach the vw/vh term, so nothing changes there.
+   -------------------------------------------------------------------------- */
+html {
+  font-size: max(100%, min(.8333vw, 1.4815vh));
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: var(--anchor-offset);
+}
+
+/* --------------------------------------------------------------------------
+   3. BASE
    -------------------------------------------------------------------------- */
 *,
 *::before,
 *::after { box-sizing: border-box; }
-
-html { scroll-padding-top: var(--anchor-offset); }
 
 body {
   margin: 0;
@@ -116,8 +151,15 @@ a { color: inherit; }
   border-radius: var(--r);
 }
 
+/* The icon sprite is markup, not something to see. */
+.icon-sprite {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+}
+
 /* --------------------------------------------------------------------------
-   LAYOUT
+   4. LAYOUT
    -------------------------------------------------------------------------- */
 .wrap {
   width: 100%;
@@ -131,7 +173,6 @@ a { color: inherit; }
   background: var(--white);
 }
 .band--tint { background: var(--band-tint); }
-.band--tint-b { background: var(--band-tint-warm); }
 
 /* A hairline where one light band meets the next. Dropped either side of the
    dark bands and the closing call, where the change of ground does the job. */
@@ -145,7 +186,7 @@ a { color: inherit; }
 .band--cta {
   position: relative;
   overflow: hidden;
-  padding-block: clamp(72px, 8vw, 112px);
+  padding-block: clamp(4.5rem, 8vw, 7rem);
   background: var(--cta-band);
   color: #fff;
 }
@@ -154,7 +195,7 @@ a { color: inherit; }
   position: absolute;
   inset: 0;
   background-image: radial-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-size: 1.5rem 1.5rem;
   pointer-events: none;
 }
 .band--cta > * { position: relative; }
@@ -166,12 +207,11 @@ a { color: inherit; }
 .band--deep {
   position: relative;
   overflow: hidden;
-  padding-block: clamp(76px, 8vw, 116px);
+  padding-block: clamp(4.75rem, 8vw, 7.25rem);
   background: linear-gradient(160deg,
     #205fa6 0%, #1d569a 28%, #164784 47%,
     #113659 65%, #0d2748 83%, #0a1c38 100%);
 
-  --heading: #ffffff;
   --muted: rgba(226, 238, 252, .70);
   --border: rgba(255, 255, 255, .16);
   --navy: #ffffff;
@@ -181,7 +221,7 @@ a { color: inherit; }
   position: absolute;
   inset: 0;
   background-image: radial-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px);
-  background-size: 26px 26px;
+  background-size: 1.625rem 1.625rem;
   pointer-events: none;
 }
 .band--deep > * { position: relative; }
@@ -190,23 +230,18 @@ a { color: inherit; }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 18px;
+  gap: 1.125rem;
 }
 .stack > * { margin: 0; }
 
 /* Spacing utilities: a nudge for a single child off the stack's rhythm. */
-.mt-6 { margin-top: 6px; }
-.mt-10 { margin-top: 10px; }
-.mt-12 { margin-top: 12px; }
-.mt-24 { margin-top: 24px; }
+.mt-10 { margin-top: .625rem; }
+.mt-12 { margin-top: .75rem; }
 .center { justify-content: center; }
 .measure-58 { max-width: 58ch; }
 
-/* The icon sprite is markup, not something to see. */
-.icon-sprite { position: absolute; }
-
 /* --------------------------------------------------------------------------
-   TYPE COMPONENTS
+   5. TYPE COMPONENTS
    -------------------------------------------------------------------------- */
 .sec-title {
   font-size: var(--step-3);
@@ -224,25 +259,22 @@ a { color: inherit; }
   color: var(--muted);
 }
 .lead strong { color: var(--navy); font-weight: 700; }
-.lead em { font-style: italic; }
 
-.band--cta .lead { font-size: 18px; color: rgba(226, 238, 252, .82); }
+.band--cta .lead { font-size: 1.125rem; color: rgba(226, 238, 252, .82); }
 .band--cta .lead strong { color: #fff; }
 
-/* The small uppercase label a row or card is headed with. */
+/* The small uppercase label a row is headed with. */
 .compare-tag {
   display: inline-block;
-  font-size: 12px;
+  font-size: .75rem;
   font-weight: 800;
   letter-spacing: .11em;
-  text-transform: uppercase;
-  padding: 5px 12px;
-  border-radius: var(--r);
   line-height: 1.3;
+  text-transform: uppercase;
+  padding: .3125rem .75rem;
+  border-radius: var(--r);
 }
-.tag-neutral { background: var(--grey-soft); color: var(--grey-ink); }
 .tag-green { background: var(--tint-green); color: var(--green-ink); }
-.tag-blue { background: var(--tint-blue); color: var(--blue); }
 
 /* Navy bold on a 3px green rule, painted as a background rather than an
    underline so it sits tight under the type and wraps across lines. */
@@ -250,26 +282,26 @@ a { color: inherit; }
   font-weight: 700;
   color: var(--navy);
   background-image: linear-gradient(var(--green), var(--green));
-  background-size: 100% 3px;
+  background-size: 100% .1875rem;
   background-position: 0 calc(100% - 1px);
   background-repeat: no-repeat;
-  padding-bottom: 3px;
+  padding-bottom: .1875rem;
 }
 
 /* --------------------------------------------------------------------------
-   BUTTONS
+   6. BUTTONS
    -------------------------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 11px;
-  height: 54px;
-  padding-inline: 26px;
+  gap: .6875rem;
+  height: 3.375rem;
+  padding-inline: 1.625rem;
   border-radius: var(--r);
   border: 1.5px solid transparent;
   font: inherit;
-  font-size: 15px;
+  font-size: .9375rem;
   font-weight: 700;
   line-height: 1;
   text-decoration: none;
@@ -278,8 +310,8 @@ a { color: inherit; }
   transition: transform .25s var(--ease), background-color .25s ease,
               border-color .25s ease, box-shadow .25s ease, color .25s ease;
 }
-.btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
-.btn:active { transform: translateY(-1px); }
+.btn:hover { transform: translateY(-.1875rem); box-shadow: var(--shadow-lift); }
+.btn:active { transform: translateY(-.0625rem); }
 
 .btn--solid {
   background: var(--green);
@@ -288,30 +320,27 @@ a { color: inherit; }
 }
 .btn--solid:hover { filter: brightness(1.04); }
 
+/* the arrow is sized here, not in the markup, so it scales with the label */
+.btn .icon {
+  flex: none;
+  inline-size: .9375rem;
+  block-size: .9375rem;
+}
+
 .band--cta .btn--solid {
-  height: 58px;
-  padding-inline: 36px;
-  box-shadow: 0 1px 2px rgba(20, 40, 80, .14);
+  height: 3.625rem;
+  padding-inline: 2.25rem;
+  box-shadow: 0 1px .125rem rgba(20, 40, 80, .14);
+}
+.band--cta .btn .icon {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
 }
 
-.btn-row { display: flex; flex-wrap: wrap; gap: 14px; }
-
-/* Below 380px the label is allowed to wrap and the fixed height becomes a
-   floor, so the button can never be wider than the viewport. */
-@media (max-width: 380px) {
-  .btn {
-    white-space: normal;
-    height: auto;
-    min-height: 54px;
-    padding-block: 15px;
-    text-align: center;
-  }
-}
-
-.icon { flex: none; }
+.btn-row { display: flex; flex-wrap: wrap; gap: .875rem; }
 
 /* --------------------------------------------------------------------------
-   HERO
+   7. HERO
    -------------------------------------------------------------------------- */
 .hero {
   position: relative;
@@ -319,8 +348,8 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   overflow: hidden;
-  min-height: min(76vh, 620px);
-  padding-block: clamp(56px, 6vw, 84px);
+  min-height: min(76vh, 38.75rem);
+  padding-block: clamp(3.5rem, 6vw, 5.25rem);
   /* No rule at the foot and no flat white: the ground runs down into the tint
      so the deep band under it starts on a settled colour. */
   background: linear-gradient(180deg,
@@ -329,7 +358,11 @@ a { color: inherit; }
     var(--band-tint) 100%);
 }
 
-/* ---------- the ground: washes of brand colour, each on its own heading ---- */
+/* ---------- the ground: washes of brand colour, each on its own heading ----
+   One element per wash, moved by transform on separate clocks, so they drift
+   apart and back together rather than sliding as one sheet. The layer is the
+   height of the hero and its mask is in percentages, so the washes go out
+   entirely before the foot whatever the hero's height. ---- */
 .hero-wash {
   position: absolute;
   top: 0;
@@ -349,30 +382,30 @@ a { color: inherit; }
 }
 /* green: opens top-left over the headline and runs down to the right */
 .hero-wash__g {
-  inline-size: max(1015px, 53.4vw);
-  block-size: 830px;
-  margin-left: min(-987px, -51.9vw);
-  top: -315px;
+  inline-size: 63.4375rem;
+  block-size: 51.875rem;
+  margin-left: -61.6875rem;
+  top: -19.6875rem;
   background: radial-gradient(closest-side ellipse at center, rgba(128, 195, 74, .24), rgba(128, 195, 74, 0) 100%);
-  animation: washG 71s linear infinite;
+  animation: wash-g 71s linear infinite;
 }
 /* brand blue: opens top-right and runs the other way */
 .hero-wash__b {
-  inline-size: max(1090px, 57.4vw);
-  block-size: 910px;
-  margin-left: min(-75px, -3.9vw);
-  top: -295px;
+  inline-size: 68.125rem;
+  block-size: 56.875rem;
+  margin-left: -4.6875rem;
+  top: -18.4375rem;
   background: radial-gradient(closest-side ellipse at center, rgba(18, 102, 181, .21), rgba(18, 102, 181, 0) 100%);
-  animation: washB 97s linear infinite;
+  animation: wash-b 97s linear infinite;
 }
 /* sky: the low one, parked under the call. Slowest and widest. */
 .hero-wash__s {
-  inline-size: max(1170px, 61.6vw);
-  block-size: 860px;
-  margin-left: min(-545px, -28.7vw);
-  top: 200px;
+  inline-size: 73.125rem;
+  block-size: 53.75rem;
+  margin-left: -34.0625rem;
+  top: 12.5rem;
   background: radial-gradient(closest-side ellipse at center, rgba(46, 140, 214, .21), rgba(46, 140, 214, 0) 100%);
-  animation: washS 127s linear infinite;
+  animation: wash-s 127s linear infinite;
 }
 /* A sheen crossing the surface, the way light moves over one. */
 .hero-wash::after {
@@ -384,36 +417,37 @@ a { color: inherit; }
     rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, .34) 50%, rgba(255, 255, 255, 0) 70%);
   background-repeat: no-repeat;
   background-size: 260% 100%;
-  animation: heroSheen 47s ease-in-out infinite;
+  animation: hero-sheen 47s ease-in-out infinite;
 }
 
-@keyframes washG {
+/* Vertical only, four waypoints each, periods that share no useful factor. */
+@keyframes wash-g {
   0%   { transform: translate3d(0, 0, 0); }
   25%  { transform: translate3d(0, 22%, 0); }
   50%  { transform: translate3d(0, 6%, 0); }
   75%  { transform: translate3d(0, -14%, 0); }
   100% { transform: translate3d(0, 0, 0); }
 }
-@keyframes washB {
+@keyframes wash-b {
   0%   { transform: translate3d(0, 0, 0); }
   25%  { transform: translate3d(0, 26%, 0); }
   50%  { transform: translate3d(0, -8%, 0); }
   75%  { transform: translate3d(0, -24%, 0); }
   100% { transform: translate3d(0, 0, 0); }
 }
-@keyframes washS {
+@keyframes wash-s {
   0%   { transform: translate3d(0, 0, 0); }
   25%  { transform: translate3d(0, -18%, 0); }
   50%  { transform: translate3d(0, 10%, 0); }
   75%  { transform: translate3d(0, 20%, 0); }
   100% { transform: translate3d(0, 0, 0); }
 }
-@keyframes heroSheen {
+@keyframes hero-sheen {
   0%, 100% { background-position: 124% 0; }
   50%      { background-position: -24% 0; }
 }
 
-/* Copy on the left, the year beside it. */
+/* ---------- copy on the left, the year beside it ---------- */
 .hero-inner {
   position: relative;
   text-align: left;
@@ -421,7 +455,7 @@ a { color: inherit; }
 .cw-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
-  gap: clamp(36px, 4.6vw, 60px);
+  gap: clamp(2.25rem, 4.6vw, 3.75rem);
   align-items: center;
   width: 100%;
 }
@@ -429,13 +463,13 @@ a { color: inherit; }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 22px;
+  gap: 1.375rem;
 }
 
 .hero h1 {
-  font-size: clamp(32px, 4.2vw, 48px);
+  font-size: clamp(2rem, 4.2vw, 3rem);
   line-height: 1.12;
-  letter-spacing: -.8px;
+  letter-spacing: -.05rem;
   max-width: 16ch;
   text-wrap: balance;
 }
@@ -443,7 +477,7 @@ a { color: inherit; }
 
 /* The one-line promise under the headline: a step below it, still navy. */
 .hero-deck {
-  font-size: clamp(18px, 1.5vw, 20px);
+  font-size: clamp(1.125rem, 1.5vw, 1.25rem);
   font-weight: 700;
   line-height: 1.4;
   letter-spacing: -.012em;
@@ -452,7 +486,7 @@ a { color: inherit; }
 }
 
 .hero-sub {
-  font-size: 17px;
+  font-size: 1.0625rem;
   line-height: 1.7;
   font-weight: 500;
   max-width: 52ch;
@@ -460,18 +494,20 @@ a { color: inherit; }
   text-wrap: pretty;
 }
 
-.hero .btn-row { margin-top: 8px; }
+.hero .btn-row { margin-top: .5rem; }
 
 /* the line under the hero's button */
 .hero-note {
-  margin-top: 2px;
-  font-size: 14px;
+  margin-top: .125rem;
+  font-size: .875rem;
   font-weight: 600;
   color: var(--faint);
 }
 
-/* Staged entrance: each block lifts in on its own delay. `backwards` drops the
-   fill afterwards so hover states still win. */
+/* ---------- staged entrance ----------
+   Each block lifts in on its own delay. `backwards` drops the fill afterwards
+   so hover states still win. Gated on [data-hero-anim], which the script sets
+   in the head: a page without the script shows the hero outright. */
 @media (prefers-reduced-motion: no-preference) {
   [data-hero-anim="on"] .hero h1,
   [data-hero-anim="on"] .hero-deck,
@@ -487,6 +523,7 @@ a { color: inherit; }
   /* the year comes in with the headline — it is the other half of the fold */
   [data-hero-anim="on"] .year-wrap { animation-delay: .18s; }
 
+  /* inline-block only where the phrase can't be pushed off the measure */
   @media (min-width: 640px) {
     [data-hero-anim="on"] .hero h1 .accent {
       display: inline-block;
@@ -510,25 +547,21 @@ a { color: inherit; }
   [data-hero-anim="on"] .mo:nth-child(12) { animation-delay: .85s; }
 }
 
-@keyframes hero-in {
-  from { opacity: 0; transform: translateY(14px); }
-}
-
 /* --------------------------------------------------------------------------
-   THE YEAR — twelve pages, one reviewed and improved each month
+   8. THE YEAR — twelve pages, one reviewed and improved each month
    A 4×3 grid of small page tiles on the card recipe. January is done and
    carries the check; February is the one in hand and carries a live dot; the
    rest wait. Each tile lifts and takes the green rule under the cursor.
    -------------------------------------------------------------------------- */
 .year-wrap {
   width: 100%;
-  max-width: 440px;
+  max-width: 27.5rem;
   margin-inline: auto;
 }
 .year {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: .75rem;
 }
 
 .mo {
@@ -536,12 +569,12 @@ a { color: inherit; }
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: .5rem;
   aspect-ratio: 4 / 5;
-  padding: 12px 12px 11px;
+  padding: .75rem .75rem .6875rem;
   border-radius: var(--r);
   background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
-  box-shadow: 0 1px 3px rgba(20, 40, 80, .07), 0 12px 28px rgba(20, 40, 80, .10);
+  box-shadow: 0 .0625rem .1875rem rgba(20, 40, 80, .07), 0 .75rem 1.75rem rgba(20, 40, 80, .10);
   transition: transform .4s var(--ease), box-shadow .4s var(--ease);
 }
 .mo::before {
@@ -550,20 +583,20 @@ a { color: inherit; }
   top: 0;
   inset-inline: 0;
   z-index: 3;
-  block-size: 3px;
+  block-size: .1875rem;
   background: var(--green);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform .45s var(--ease);
 }
 .mo:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 1px 3px rgba(20, 40, 80, .08), 0 20px 40px rgba(20, 40, 80, .16);
+  transform: translateY(-.25rem);
+  box-shadow: 0 .0625rem .1875rem rgba(20, 40, 80, .08), 0 1.25rem 2.5rem rgba(20, 40, 80, .16);
 }
 .mo:hover::before { transform: scaleX(1); }
 
 .mo-label {
-  font-size: 8.5px;
+  font-size: .53125rem;
   font-weight: 800;
   letter-spacing: .18em;
   text-transform: uppercase;
@@ -578,23 +611,23 @@ a { color: inherit; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
+  gap: .3125rem;
 }
 .mo-wire i {
   display: block;
-  block-size: 4px;
+  block-size: .25rem;
   border-radius: 1px;
   background: var(--chip-blue);
   opacity: .6;
 }
-.mo-wire i:nth-child(1) { block-size: 9px; inline-size: 58%; background: var(--navy); opacity: .28; }
+.mo-wire i:nth-child(1) { block-size: .5625rem; inline-size: 58%; background: var(--navy); opacity: .28; }
 .mo-wire i:nth-child(3) { inline-size: 82%; }
 .mo-wire i:nth-child(4) { inline-size: 64%; }
 
 /* ---- done: January, rule drawn, check on ---- */
 .mo--done {
   background: linear-gradient(180deg, var(--white), var(--tint-green));
-  box-shadow: 0 1px 3px rgba(92, 154, 46, .12), 0 12px 28px rgba(92, 154, 46, .16);
+  box-shadow: 0 .0625rem .1875rem rgba(92, 154, 46, .12), 0 .75rem 1.75rem rgba(92, 154, 46, .16);
 }
 .mo--done::before { transform: scaleX(1); }
 .mo--done .mo-label { color: var(--green-ink); }
@@ -603,35 +636,34 @@ a { color: inherit; }
 
 .mo-check {
   position: absolute;
-  right: 9px;
-  top: 10px;
+  right: .5625rem;
+  top: .625rem;
   display: grid;
   place-items: center;
-  inline-size: 20px;
-  block-size: 20px;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
   border-radius: 50%;
   background: var(--green);
   color: #fff;
-  box-shadow: 0 2px 6px rgba(92, 154, 46, .38);
+  box-shadow: 0 .125rem .375rem rgba(92, 154, 46, .38);
 }
-.mo-check svg { inline-size: 11px; block-size: 11px; }
+.mo-check svg { inline-size: .6875rem; block-size: .6875rem; }
 
 /* ---- next: February, the one in hand ---- */
 .mo--next .mo-label { color: var(--blue); }
 .mo-dot {
   position: absolute;
-  right: 13px;
-  top: 14px;
-  inline-size: 8px;
-  block-size: 8px;
+  right: .8125rem;
+  top: .875rem;
+  inline-size: .5rem;
+  block-size: .5rem;
   border-radius: 50%;
   background: var(--blue);
-  box-shadow: 0 0 0 0 rgba(18, 102, 181, .5);
   animation: dot-pulse 2.6s ease-out .8s infinite;
 }
 @keyframes dot-pulse {
   0%   { box-shadow: 0 0 0 0 rgba(18, 102, 181, .5); }
-  70%  { box-shadow: 0 0 0 7px rgba(18, 102, 181, 0); }
+  70%  { box-shadow: 0 0 0 .4375rem rgba(18, 102, 181, 0); }
   100% { box-shadow: 0 0 0 0 rgba(18, 102, 181, 0); }
 }
 
@@ -646,40 +678,35 @@ a { color: inherit; }
   .mo--done:hover .mo-wire i { animation-play-state: paused; }
 }
 @keyframes wire-draw {
-  0%       { opacity: 0; transform: translateY(3px); }
+  0%       { opacity: 0; transform: translateY(.1875rem); }
   8%, 100% { opacity: var(--at, .6); transform: translateY(0); }
 }
 
 .year-cap {
-  margin-top: 16px;
-  font-size: 14px;
+  margin-top: 1rem;
+  font-size: .875rem;
   font-weight: 600;
   line-height: 1.5;
   color: var(--faint);
 }
 .year-cap strong { color: var(--navy); font-weight: 700; }
 
-@media (max-width: 900px) {
-  .cw-hero { grid-template-columns: minmax(0, 1fr); }
-  .year-wrap { max-width: 400px; margin-inline: 0; }
-}
-
 /* --------------------------------------------------------------------------
-   NEVER FINISHED — the changelog
+   9. CHANGELOG — Websites are never really finished
    The copy holds the left of the deep band; on the right, a month of changes
    to one site rolls past behind a frame. Pointing at it stops the roll.
    -------------------------------------------------------------------------- */
 .nf-split {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
-  gap: clamp(36px, 5vw, 72px);
+  gap: clamp(2.25rem, 5vw, 4.5rem);
   align-items: center;
 }
 .nf-copy {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 18px;
+  gap: 1.125rem;
 }
 
 .ticker { width: 100%; }
@@ -687,16 +714,16 @@ a { color: inherit; }
   border: 1px solid rgba(255, 255, 255, .14);
   border-radius: var(--r);
   background: rgba(255, 255, 255, .04);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, .22);
+  box-shadow: 0 1.25rem 3.125rem rgba(0, 0, 0, .22);
   overflow: hidden;
 }
 .ticker-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 16px;
+  gap: .625rem;
+  padding: .8125rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, .1);
-  font-size: 11px;
+  font-size: .6875rem;
   font-weight: 800;
   letter-spacing: .14em;
   text-transform: uppercase;
@@ -710,18 +737,20 @@ a { color: inherit; }
   color: rgba(226, 238, 252, .55);
 }
 .ticker-live {
-  inline-size: 8px;
-  block-size: 8px;
+  inline-size: .5rem;
+  block-size: .5rem;
   border-radius: 50%;
   background: var(--green);
   animation: live-pulse 2.4s ease-out infinite;
 }
 @keyframes live-pulse {
   0%   { box-shadow: 0 0 0 0 rgba(128, 195, 74, .55); }
-  70%  { box-shadow: 0 0 0 7px rgba(128, 195, 74, 0); }
+  70%  { box-shadow: 0 0 0 .4375rem rgba(128, 195, 74, 0); }
   100% { box-shadow: 0 0 0 0 rgba(128, 195, 74, 0); }
 }
 
+/* The list is doubled by the script and travels exactly half its height, so
+   the loop closes without a jump. */
 .ticker-view {
   position: relative;
   height: 21rem;
@@ -729,12 +758,10 @@ a { color: inherit; }
   mask-image: linear-gradient(180deg, transparent 0, #000 10%, #000 88%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 10%, #000 88%, transparent 100%);
 }
-.ticker-list {
-  animation: tickscroll 44s linear infinite;
-}
+.ticker-list { animation: tick-scroll 44s linear infinite; }
 .ticker:hover .ticker-list,
 .ticker:focus-within .ticker-list { animation-play-state: paused; }
-@keyframes tickscroll {
+@keyframes tick-scroll {
   from { transform: translateY(0); }
   to   { transform: translateY(-50%); }
 }
@@ -742,15 +769,15 @@ a { color: inherit; }
 .t-row {
   display: grid;
   grid-template-columns: 5.25rem minmax(0, 1fr) auto;
-  gap: 14px;
+  gap: .875rem;
   align-items: center;
-  padding: 14px 16px;
+  padding: .875rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, .08);
   transition: background-color .3s var(--ease);
 }
 .t-row:hover { background: rgba(255, 255, 255, .05); }
 .t-time {
-  font-size: 11px;
+  font-size: .6875rem;
   font-weight: 700;
   letter-spacing: .04em;
   text-transform: uppercase;
@@ -760,23 +787,23 @@ a { color: inherit; }
 .t-act {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: .4375rem;
   min-width: 0;
-  font-size: 15px;
+  font-size: .9375rem;
   font-weight: 600;
   line-height: 1.35;
   color: #eef4fb;
 }
-.t-act svg { flex: none; inline-size: 14px; block-size: 14px; color: #ff9b6b; }
+.t-act svg { flex: none; inline-size: .875rem; block-size: .875rem; color: #ff9b6b; }
 .t-tag {
-  font-size: 10.5px;
+  font-size: .65625rem;
   font-weight: 800;
   letter-spacing: .08em;
-  text-transform: uppercase;
-  padding: 4px 9px;
-  border-radius: 100px;
-  border: 1px solid;
   line-height: 1.2;
+  text-transform: uppercase;
+  padding: .25rem .5625rem;
+  border-radius: 999px;
+  border: 1px solid;
   white-space: nowrap;
 }
 .t-fix  { color: #ffb08a; border-color: rgba(255, 176, 138, .45); }
@@ -789,32 +816,22 @@ a { color: inherit; }
 .t-heat { color: #ff9b6b; border-color: rgba(255, 155, 107, .5); }
 
 .ticker-cap {
-  margin-top: 12px;
-  font-size: 13px;
+  margin-top: .75rem;
+  font-size: .8125rem;
   font-weight: 600;
   text-align: right;
   color: rgba(226, 238, 252, .55);
 }
 
-@media (max-width: 900px) {
-  .nf-split { grid-template-columns: minmax(0, 1fr); align-items: start; }
-  .ticker-view { height: 18rem; }
-}
-@media (max-width: 480px) {
-  .t-row { grid-template-columns: 4.25rem minmax(0, 1fr) auto; gap: 10px; padding-inline: 12px; }
-  .t-act { font-size: 14px; }
-  .ticker-head__r { display: none; }
-}
-
 /* --------------------------------------------------------------------------
-   HOURS NEEDED — four tiers in one card
-   The rows read as a list on the card recipe; each carries its range as a
-   bar, and the anchor row — the one most businesses sit in — is ruled green.
+   10. HOUR TIERS — four rows in one card
+   Each row carries its range as a bar; the width belongs to the tier, not to
+   the markup. The anchor row — where most businesses sit — is ruled green.
    -------------------------------------------------------------------------- */
 .tiers {
   width: 100%;
-  max-width: 880px;
-  margin-top: 10px;
+  max-width: 55rem;
+  margin-top: .625rem;
   border-radius: var(--r);
   overflow: hidden;
   background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
@@ -824,35 +841,41 @@ a { color: inherit; }
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 13px;
-  padding: 22px clamp(22px, 2.6vw, 32px);
+  gap: .8125rem;
+  padding: 1.375rem clamp(1.375rem, 2.6vw, 2rem);
   border-top: 1px solid var(--border-soft);
   transition: background-color .35s var(--ease);
 }
 .tier:first-child { border-top: 0; }
 .tier:hover { background: var(--tint-blue); }
 
+/* the four tiers, by how much of the 20-hour ceiling each one reaches */
+.tier--light   { --w: 22%; }
+.tier--typical { --w: 45%; }
+.tier--active  { --w: 68%; }
+.tier--high    { --w: 100%; }
+
 .tier-txt {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 1.125rem;
 }
 .tier-lab {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 12px;
+  gap: .5rem .75rem;
   font-size: var(--step-1);
   font-weight: 600;
   line-height: 1.4;
   color: var(--navy);
   transition: transform .35s var(--ease);
 }
-.tier:hover .tier-lab { transform: translateX(4px); }
+.tier:hover .tier-lab { transform: translateX(.25rem); }
 .tier-hrs {
   flex: none;
-  font-size: 19px;
+  font-size: 1.1875rem;
   font-weight: 800;
   letter-spacing: -.02em;
   white-space: nowrap;
@@ -861,8 +884,8 @@ a { color: inherit; }
 }
 
 .tier-bar {
-  block-size: 8px;
-  border-radius: 100px;
+  block-size: .5rem;
+  border-radius: 999px;
   background: var(--grey-soft);
   overflow: hidden;
 }
@@ -870,7 +893,7 @@ a { color: inherit; }
   display: block;
   block-size: 100%;
   inline-size: var(--w, 50%);
-  border-radius: 100px;
+  border-radius: 999px;
   background: var(--blue);
   transform-origin: left;
 }
@@ -882,7 +905,7 @@ a { color: inherit; }
   top: 0;
   bottom: 0;
   left: 0;
-  inline-size: 4px;
+  inline-size: .25rem;
   background: var(--green);
 }
 .tier--anchor .tier-bar i { background: var(--green); }
@@ -899,20 +922,15 @@ a { color: inherit; }
   [data-anim="on"] .tiers.is-revealed .tier:nth-child(4) .tier-bar i { animation-delay: .51s; }
 }
 
-@media (max-width: 560px) {
-  .tier-txt { flex-direction: column; align-items: flex-start; gap: 6px; }
-  .tier-hrs { font-size: 17px; }
-}
-
 /* --------------------------------------------------------------------------
-   TWO WAYS — the program cards
-   Support, then Evolution: two cards that read left to right, blue then green,
-   the same shell and 3px accent the reference gives its pairs.
+   11. PROGRAM CARDS — Two ways to use your hours
+   Support, then Evolution: two cards that read left to right, blue then
+   green, on the same shell and 3px accent the reference gives its pairs.
    -------------------------------------------------------------------------- */
 .plans {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 1.25rem;
   width: 100%;
 }
 .plan {
@@ -920,10 +938,10 @@ a { color: inherit; }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
-  padding: clamp(26px, 3vw, 36px);
+  gap: .75rem;
+  padding: clamp(1.625rem, 3vw, 2.25rem);
   border-radius: var(--r);
-  border-top: 3px solid var(--border-soft);
+  border-top: .1875rem solid var(--border-soft);
   background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
   box-shadow: var(--shadow-card);
   transition: transform .4s var(--ease), box-shadow .4s var(--ease);
@@ -931,67 +949,67 @@ a { color: inherit; }
 .plan::before {
   content: '';
   position: absolute;
-  top: -3px;
+  top: -.1875rem;
   inset-inline: 0;
-  block-size: 3px;
+  block-size: .1875rem;
   background: var(--blue);
   transform-origin: left;
 }
 .plan--evo::before { background: var(--green); }
 .plan:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-card), 0 22px 44px rgba(20, 40, 80, .13);
+  transform: translateY(-.3125rem);
+  box-shadow: var(--shadow-card), 0 1.375rem 2.75rem rgba(20, 40, 80, .13);
 }
 
 /* the mark, in a disc that fills with the lane's colour under the cursor */
 .plan-mark {
   display: grid;
   place-items: center;
-  inline-size: 46px;
-  block-size: 46px;
+  inline-size: 2.875rem;
+  block-size: 2.875rem;
   border-radius: 50%;
-  margin-bottom: 2px;
+  margin-bottom: .125rem;
   background: var(--tint-blue);
   color: var(--blue);
   transition: background-color .4s var(--ease), color .4s var(--ease),
               transform .4s var(--ease), box-shadow .4s var(--ease);
 }
-.plan-mark svg { inline-size: 24px; block-size: 24px; }
+.plan-mark svg { inline-size: 1.5rem; block-size: 1.5rem; }
 .plan--evo .plan-mark { background: var(--tint-green); color: var(--green-ink); }
 .plan:hover .plan-mark {
   transform: scale(1.07);
   background: var(--blue);
   color: #fff;
-  box-shadow: 0 8px 20px rgba(18, 102, 181, .32);
+  box-shadow: 0 .5rem 1.25rem rgba(18, 102, 181, .32);
 }
 .plan--evo:hover .plan-mark {
   background: var(--green);
   color: #14300a;
-  box-shadow: 0 8px 20px rgba(128, 195, 74, .38);
+  box-shadow: 0 .5rem 1.25rem rgba(128, 195, 74, .38);
 }
 
 .plan-tag {
-  font-size: 12px;
+  font-size: .75rem;
   font-weight: 800;
   letter-spacing: .11em;
   text-transform: uppercase;
-  padding: 5px 12px;
+  padding: .3125rem .75rem;
   border-radius: var(--r);
   background: var(--tint-blue);
   color: var(--blue);
   transition: transform .35s var(--ease), box-shadow .35s var(--ease);
 }
-.plan:hover .plan-tag { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(20, 40, 80, .12); }
+.plan:hover .plan-tag { transform: translateY(-.125rem); box-shadow: 0 .25rem .75rem rgba(20, 40, 80, .12); }
 .plan--evo .plan-tag { background: var(--tint-green); color: var(--green-ink); }
 
-.plan h3 { font-size: clamp(21px, 1.9vw, 25px); line-height: 1.25; letter-spacing: -.019em; }
+.plan h3 { font-size: clamp(1.3125rem, 1.9vw, 1.5625rem); line-height: 1.25; letter-spacing: -.019em; }
 .plan p { font-size: var(--step-1); line-height: 1.7; color: var(--muted); }
 
 /* the line that closes the Evolution card */
 .plan-min {
   margin-top: auto;
-  padding-top: 10px;
-  font-size: 12px;
+  padding-top: .625rem;
+  font-size: .75rem;
   font-weight: 800;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -1001,11 +1019,11 @@ a { color: inherit; }
 /* the footnote under the pair, on the tint */
 .note {
   width: 100%;
-  margin-top: 6px;
-  padding: 20px 24px;
+  margin-top: .375rem;
+  padding: 1.25rem 1.5rem;
   border-radius: var(--r);
   background: var(--tint-blue);
-  font-size: 15.5px;
+  font-size: .96875rem;
   line-height: 1.65;
   color: var(--navy);
 }
@@ -1024,9 +1042,7 @@ a { color: inherit; }
   [data-anim="on"] .plans.is-revealed .plan:nth-child(2) { animation-delay: .36s; }
 
   [data-anim="on"] .plans .plan::before { transform: scaleX(0); }
-  [data-anim="on"] .plans.is-revealed .plan::before {
-    animation: rule-draw .5s var(--ease) forwards;
-  }
+  [data-anim="on"] .plans.is-revealed .plan::before { animation: rule-draw .5s var(--ease) forwards; }
   [data-anim="on"] .plans.is-revealed .plan:nth-child(1)::before { animation-delay: .34s; }
   [data-anim="on"] .plans.is-revealed .plan:nth-child(2)::before { animation-delay: .62s; }
 
@@ -1039,45 +1055,83 @@ a { color: inherit; }
   [data-anim="on"] .plans.is-revealed .plan:nth-child(2) .plan-mark { animation-delay: .58s; }
 
   /* the phrase in the Evolution card rules itself in once the card has landed */
-  [data-anim="on"] .plans .phrase { background-size: 0 3px; }
+  [data-anim="on"] .plans .phrase { background-size: 0 .1875rem; }
   [data-anim="on"] .plans.is-revealed .phrase { animation: phrase-in .5s var(--ease) .9s forwards; }
 }
 
+/* --------------------------------------------------------------------------
+   12. CLOSING CTA
+   -------------------------------------------------------------------------- */
+.final { text-align: center; }
+.final .wrap { max-width: 83.75rem; }
+.final .stack { align-items: center; }
+.final .lead { margin-inline: auto; }
+
+/* Held on a single line while it can be; section 14 lets it wrap on phones. */
+.final .sec-title {
+  max-width: none;
+  white-space: nowrap;
+  font-size: clamp(1.1875rem, 3.1vw, 2.375rem);
+}
+
+/* --------------------------------------------------------------------------
+   13. REVEAL AND SHARED KEYFRAMES
+   -------------------------------------------------------------------------- */
+[data-anim="on"] .reveal {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+[data-anim="on"] .reveal.is-revealed { opacity: 1; transform: none; }
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(.875rem); }
+}
 @keyframes card-rise {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(1.125rem); }
 }
 @keyframes rule-draw {
   to { transform: scaleX(1); }
 }
 @keyframes tag-in {
-  from { opacity: 0; transform: translateY(-6px); }
+  from { opacity: 0; transform: translateY(-.375rem); }
 }
 @keyframes mark-in {
   from { opacity: 0; transform: scale(.72); }
 }
 @keyframes phrase-in {
-  to { background-size: 100% 3px; }
-}
-
-@media (max-width: 900px) {
-  .plans { grid-template-columns: minmax(0, 1fr); }
+  to { background-size: 100% .1875rem; }
 }
 
 /* --------------------------------------------------------------------------
-   CLOSING CTA
+   14. RESPONSIVE — tablet down to the smallest phones
+   Widest first. Nothing above 1920px is listed here: the root size in
+   section 2 carries the layout up to 5K unchanged.
    -------------------------------------------------------------------------- */
-.final { text-align: center; }
-.final .wrap { max-width: 1340px; }
-.final .stack { align-items: center; }
-.final .lead { margin-inline: auto; }
 
-/* Held on a single line while it can be; below 560px it is allowed to wrap. */
-.final .sec-title {
-  max-width: none;
-  white-space: nowrap;
-  font-size: clamp(19px, 3.1vw, 38px);
+/* ≤ 900 — the two-column splits stack */
+@media (max-width: 900px) {
+  .cw-hero { grid-template-columns: minmax(0, 1fr); }
+  .year-wrap { max-width: 25rem; margin-inline: 0; }
+
+  .nf-split { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .ticker-view { height: 18rem; }
+
+  .plans { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ≤ 640 — buttons take the full width */
+@media (max-width: 640px) {
+  .btn-row { width: 100%; }
+  .btn-row .btn { flex: 1 1 100%; }
+}
+
+/* ≤ 560 — the tier figure drops under its label; the closing line may wrap */
 @media (max-width: 560px) {
+  .tier-txt { flex-direction: column; align-items: flex-start; gap: .375rem; }
+  .tier-hrs { font-size: 1.0625rem; }
+
   .final .sec-title {
     white-space: normal;
     font-size: var(--step-3);
@@ -1085,27 +1139,32 @@ a { color: inherit; }
   }
 }
 
-/* --------------------------------------------------------------------------
-   REVEAL
-   -------------------------------------------------------------------------- */
-[data-anim="on"] .reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity .7s var(--ease), transform .7s var(--ease);
-  transition-delay: var(--reveal-delay, 0ms);
-}
-[data-anim="on"] .reveal.is-revealed { opacity: 1; transform: none; }
-
-/* --------------------------------------------------------------------------
-   RESPONSIVE
-   -------------------------------------------------------------------------- */
-@media (max-width: 640px) {
-  .btn-row { width: 100%; }
-  .btn-row .btn { flex: 1 1 100%; }
+/* ≤ 480 — the changelog rows tighten */
+@media (max-width: 480px) {
+  .t-row { grid-template-columns: 4.25rem minmax(0, 1fr) auto; gap: .625rem; padding-inline: .75rem; }
+  .t-act { font-size: .875rem; }
+  .ticker-head__r { display: none; }
 }
 
+/* ≤ 380 — a button label may wrap and the fixed height becomes a floor, so
+   the button can never be wider than the viewport */
+@media (max-width: 380px) {
+  .btn {
+    white-space: normal;
+    height: auto;
+    min-height: 3.375rem;
+    padding-block: .9375rem;
+    text-align: center;
+  }
+}
+
+/* ≤ 360 — three months to a row, so the tiles keep room for their marks */
+@media (max-width: 360px) {
+  .year { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
 /* --------------------------------------------------------------------------
-   REDUCED MOTION
+   15. REDUCED MOTION
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -1133,8 +1192,11 @@ a { color: inherit; }
   .plan:hover { transform: none; }
 }
 
+/* --------------------------------------------------------------------------
+   16. PRINT
+   -------------------------------------------------------------------------- */
 @media print {
-  .band { padding-block: 24px; }
+  .band { padding-block: 1.5rem; }
   [data-anim="on"] .reveal { opacity: 1; transform: none; }
   .hero-wash { display: none; }
 }

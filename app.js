@@ -1,22 +1,28 @@
+/* ==========================================================================
+   ImageWorks Creative — Website Support & Evolution
+   Behaviour for the page. Three jobs, each its own function:
+     1. setupReveals  — the scroll-triggered entrances (.reveal)
+     2. setupTicker   — the looping changelog on the deep band
+   plus the one line that runs before the body is parsed (see below).
+
+   Loaded in <head> without defer on purpose: the hero's entrance hides its
+   own content until it plays, and the flag that gates that hidden state must
+   be on <html> before the first paint. Everything else waits for the DOM.
+   ========================================================================== */
 (function () {
   'use strict';
 
   const root = document.documentElement;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  /* ------------------------------------------------------------------
-     Set before the body is parsed, which is why this file is loaded in
-     the head rather than deferred. The hero's entrance hides its own
-     content until it plays — gating the hidden state on this flag means
-     a page that never runs this line shows the hero outright instead of
-     a blank band.
-     ------------------------------------------------------------------ */
+  /* Set before the body is parsed. A page that never runs this line shows the
+     hero outright instead of a blank band. */
   root.setAttribute('data-hero-anim', 'on');
 
   /* ------------------------------------------------------------------
-     Entrance reveals. Only ever run once per element, and only when the
-     browser both supports IntersectionObserver and the visitor has not
-     asked for reduced motion.
+     1. Entrance reveals. Each element is revealed once, and only when
+     the browser supports IntersectionObserver and the visitor has not
+     asked for reduced motion — otherwise everything is shown at once.
      ------------------------------------------------------------------ */
   function setupReveals() {
     const targets = [...document.querySelectorAll('.reveal')];
@@ -59,10 +65,10 @@
   }
 
   /* ------------------------------------------------------------------
-     The changelog loops. The list is doubled once so the second half can
-     take over as the first scrolls out, and the keyframe travels exactly
-     -50%. With reduced motion the list stands still as a scrollable
-     strip, so it is left as a single copy.
+     2. The changelog loops. The list is doubled once so the second half
+     can take over as the first scrolls out, and the keyframe travels
+     exactly -50%. With reduced motion the list stands still as a
+     scrollable strip, so it is left as a single copy.
      ------------------------------------------------------------------ */
   function setupTicker() {
     const list = document.getElementById('ticker');

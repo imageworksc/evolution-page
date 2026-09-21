@@ -10,7 +10,7 @@ Built on the same design system as the [Custom Web Design](https://imageworksc.g
 
 - `index.html` — the page (semantic markup, JSON-LD, inline SVG sprite). No inline styles; every presentational hook is a class.
 - `styles.css` — design tokens and every component, in the order the contents block at the top lists them; single light theme
-- `app.js` — scroll reveals and the looping changelog; loaded in `<head>` so the hero entrance is gated on it
+- `app.js` — scroll reveals, the looping changelog, and the hero calendar that checks its months off (held while the pointer is on it); loaded in `<head>` so the hero entrance is gated on it. Every state it sets is a class — it never writes a `style` attribute.
 - `fonts/plus-jakarta-sans-latin.woff2` — variable font, weights 300–800
 
 No build step. Open `index.html` directly or serve the folder.

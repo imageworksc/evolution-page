@@ -1,9 +1,11 @@
 /* ==========================================================================
    ImageWorks Creative — Website Support & Evolution
    Behaviour for the page. Three jobs, each its own function:
-     1. setupReveals  — the scroll-triggered entrances (.reveal)
-     2. setupTicker   — the looping changelog on the deep band
+     1. setupReveals   — the scroll-triggered entrances (.reveal)
+     2. setupTicker    — the looping changelog on the deep band
+     3. setupCalendar  — the hero calendar checking its months off
    plus the one line that runs before the body is parsed (see below).
+   Nothing here writes a style attribute: every state is a class.
 
    Loaded in <head> without defer on purpose: the hero's entrance hides its
    own content until it plays, and the flag that gates that hidden state must
@@ -82,9 +84,98 @@
     list.dataset.looped = 'true';
   }
 
+  /* ------------------------------------------------------------------
+     3. The hero calendar. The months are checked off one after another;
+     when December is done the year holds for a moment, then the checks
+     come off again in a quick reverse cascade and the run starts over.
+     The count in the header and the segments of the track follow along.
+
+     Pointing at the card holds the run where it is, and a hidden tab
+     stops the clock so the page does not come back mid-burst. Under
+     reduced motion the calendar is set once and left alone.
+     ------------------------------------------------------------------ */
+  function setupCalendar() {
+    const cal = document.querySelector('[data-calendar]');
+    if (!cal) return;
+
+    const months = [...cal.querySelectorAll('.cal-m')];
+    const ticks = [...cal.querySelectorAll('.cal-track i')];
+    const count = cal.querySelector('[data-count]');
+    if (!months.length) return;
+
+    const STEP = 1700;    // ms between one month and the next
+    const HOLD = 3400;    // ms the full year stays on screen
+    const REWIND = 70;    // ms between checks coming off
+    const RESTART = 900;  // ms before the run begins again
+
+    // the markup ships with the months already done, so the run starts there
+    let done = months.filter((m) => m.classList.contains('is-done')).length;
+    let rewinding = false;
+    let timer = 0;
+    let held = false;
+
+    const paint = () => {
+      months.forEach((m, i) => {
+        m.classList.toggle('is-done', i < done);
+        m.classList.toggle('is-now', !rewinding && i === done);
+      });
+      ticks.forEach((t, i) => t.classList.toggle('on', i < done));
+      if (count) count.textContent = String(done);
+    };
+
+    if (reduced.matches) {
+      done = 3;
+      paint();
+      return;
+    }
+
+    const schedule = (ms) => { timer = window.setTimeout(step, ms); };
+
+    const step = () => {
+      if (rewinding) {
+        done -= 1;
+        paint();
+        if (done === 0) {
+          rewinding = false;
+          paint();
+          schedule(RESTART);
+        } else {
+          schedule(REWIND);
+        }
+        return;
+      }
+      done += 1;
+      paint();
+      if (done === months.length) {
+        rewinding = true;
+        schedule(HOLD);
+      } else {
+        schedule(STEP);
+      }
+    };
+
+    const hold = () => { window.clearTimeout(timer); held = true; };
+    const release = () => {
+      if (!held) return;
+      held = false;
+      schedule(rewinding ? REWIND : STEP);
+    };
+
+    cal.addEventListener('mouseenter', hold);
+    cal.addEventListener('mouseleave', release);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) hold();
+      else if (!cal.matches(':hover')) release();
+    });
+
+    paint();
+    schedule(STEP);
+  }
+
   function init() {
     setupReveals();
     setupTicker();
+    setupCalendar();
   }
 
   if (document.readyState === 'loading') {

@@ -69,9 +69,6 @@
       <line x1="5" y1="12" x2="19" y2="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
       <polyline points="12 5 19 12 12 19" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
     </symbol>
-    <symbol id="i-check" viewBox="0 0 24 24">
-      <polyline points="5 12.5 10 17.5 19 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-    </symbol>
     <!-- One mark per program, drawn to the same recipe: a 24 box, 1.7 stroke,
          round joins, nothing filled. -->
     <symbol id="i-support" viewBox="0 0 24 24">
@@ -108,24 +105,34 @@
         <p class="hero-note">Monthly plans from 5 to 20 hours. Unused hours bank and roll forward.</p>
       </div>
 
-      <!-- The year: twelve pages, one reviewed and improved each month. January
-           is done, February is in hand, the rest wait. -->
-      <div class="year-wrap" aria-hidden="true">
-        <div class="year">
-          <div class="mo mo--done"><span class="mo-label">Jan</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span><span class="mo-check"><svg><use href="#i-check"/></svg></span></div>
-          <div class="mo mo--next"><span class="mo-label">Feb</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span><span class="mo-dot"></span></div>
-          <div class="mo"><span class="mo-label">Mar</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">Apr</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">May</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">Jun</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">Jul</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">Aug</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">Sep</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">Oct</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">Nov</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
-          <div class="mo"><span class="mo-label">Dec</span><span class="mo-wire"><i></i><i></i><i></i><i></i></span></div>
+      <!-- The calendar: twelve months, one core page reviewed and improved in
+           each. The script checks the months off one after another and holds
+           the run while the pointer is on the card; the markup ships with
+           January done so the figure reads without it. Each month cell holds a
+           small wireframe of its page and takes a check when it is done. -->
+      <div class="cal-wrap">
+        <div class="cal" data-calendar aria-hidden="true">
+          <div class="cal-head">
+            <span class="cal-title"><span class="cal-live"></span>Evolution calendar</span>
+            <span class="cal-count"><b data-count>1</b> / 12 <span class="cal-count__u">pages</span></span>
+          </div>
+          <div class="cal-track"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="cal-grid">
+            <div class="cal-m is-done"><span class="cal-m__l">Jan</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m is-now"><span class="cal-m__l">Feb</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Mar</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Apr</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">May</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Jun</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Jul</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Aug</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Sep</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Oct</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Nov</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m"><span class="cal-m__l">Dec</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+          </div>
         </div>
-        <p class="year-cap"><strong>Month one, done.</strong> Eleven more pages to review and improve.</p>
+        <p class="cal-cap"><strong>One core page a month,</strong> reviewed, improved, and checked off. Twelve by year's end.</p>
       </div>
     </div>
   </section>

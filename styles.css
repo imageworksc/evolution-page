@@ -1,0 +1,1140 @@
+/* ==========================================================================
+   ImageWorks Creative — Website Support & Evolution
+   Design system shared with the Custom Web Design page:
+   https://imageworksc.github.io/Custom-Web-Design/
+   Single light theme. No dark mode — the brand commits to one visual world.
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url(fonts/plus-jakarta-sans-latin.woff2) format('woff2');
+}
+
+:root {
+  color-scheme: light;
+
+  /* ---- brand ---- */
+  --navy: #143c66;
+  --blue: #1266b5;
+  --green: #80c34a;
+  --green-ink: #5c9a2e;          /* green for text and links */
+  --ink: #1f2b3e;                /* body copy */
+  --muted: #5a6b82;
+  --faint: #7d8ea1;
+  --nav-ink: #3d464d;
+
+  /* ---- surfaces ---- */
+  --white: #ffffff;
+  --band-tint: #f2f5f9;
+  --band-tint-warm: #f1f3f6;
+  --card-top: #ffffff;
+  --card-bottom: #fcfdff;
+  --border: #e3eaf3;
+  --border-soft: #eef2f7;
+  --chip-blue: #c1daff;
+  --chip-navy: rgba(24, 73, 125, .14);
+  --tint-green: #eef6e6;
+  --tint-blue: #e5edf7;
+  --grey-soft: #e8edf4;
+  --grey-ink: #4f5f77;
+
+  /* ---- the CTA band ---- */
+  --cta-band: linear-gradient(135deg, #1266b5, #0a2c4d);
+
+  /* ---- shape: corners squared at 2px ---- */
+  --r: 2px;
+
+  --shadow-card: 0 1px 3px rgba(20, 40, 80, .08), 0 14px 34px rgba(20, 40, 80, .1);
+  --shadow-lift: 0 4px 12px rgba(20, 40, 80, .18);
+  --ring: 0 0 0 3px rgba(128, 195, 74, .5), 0 0 0 1px rgba(20, 60, 102, .55);
+
+  /* ---- rhythm ---- */
+  --shell: 1180px;
+  --gutter: clamp(22px, 4vw, 40px);
+  --band-y: clamp(64px, 8vw, 108px);
+  --measure: 66ch;
+  --anchor-offset: 24px;
+
+  /* ---- type scale ---- */
+  --step--1: 13px;
+  --step-0: 16px;
+  --step-1: 17px;
+  --step-3: clamp(26px, 3vw, 38px);
+
+  --ease: cubic-bezier(.16, .84, .44, 1);
+}
+
+/* --------------------------------------------------------------------------
+   BASE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { scroll-padding-top: var(--anchor-offset); }
+
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI',
+               Roboto, Helvetica, Arial, sans-serif;
+  font-size: var(--step-0);
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* The hero's washes are wider than the viewport by design. clip, not hidden:
+     hidden would make body a scroll container and break position: sticky. */
+  overflow-x: clip;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  color: var(--navy);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.016em;
+  text-wrap: balance;
+}
+
+p { margin: 0; text-wrap: pretty; }
+ul, ol, dl, dd { margin: 0; padding: 0; }
+li { list-style: none; }
+figure, blockquote { margin: 0; }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+
+::selection { background: rgba(128, 195, 74, .28); }
+
+:where(a, button, summary, details):focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--r);
+}
+
+/* --------------------------------------------------------------------------
+   LAYOUT
+   -------------------------------------------------------------------------- */
+.wrap {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.band {
+  padding-block: var(--band-y);
+  background: var(--white);
+}
+.band--tint { background: var(--band-tint); }
+.band--tint-b { background: var(--band-tint-warm); }
+
+/* A hairline where one light band meets the next. Dropped either side of the
+   dark bands and the closing call, where the change of ground does the job. */
+.band + .band { border-top: 1px solid var(--border); }
+.band.band--deep,
+.band.band--cta,
+.band--deep + .band,
+.band--cta + .band { border-top: 0; }
+
+/* The closing call to action: the brand gradient with a dot field over it. */
+.band--cta {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(72px, 8vw, 112px);
+  background: var(--cta-band);
+  color: #fff;
+}
+.band--cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+.band--cta > * { position: relative; }
+.band--cta h2,
+.band--cta h3 { color: #fff; }
+
+/* The deep blue field. Re-pointing the semantic tokens is enough for every
+   child to flip; nothing inside needs its own dark variant. */
+.band--deep {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(76px, 8vw, 116px);
+  background: linear-gradient(160deg,
+    #205fa6 0%, #1d569a 28%, #164784 47%,
+    #113659 65%, #0d2748 83%, #0a1c38 100%);
+
+  --heading: #ffffff;
+  --muted: rgba(226, 238, 252, .70);
+  --border: rgba(255, 255, 255, .16);
+  --navy: #ffffff;
+}
+.band--deep::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px);
+  background-size: 26px 26px;
+  pointer-events: none;
+}
+.band--deep > * { position: relative; }
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+.stack > * { margin: 0; }
+
+/* Spacing utilities: a nudge for a single child off the stack's rhythm. */
+.mt-6 { margin-top: 6px; }
+.mt-10 { margin-top: 10px; }
+.mt-12 { margin-top: 12px; }
+.mt-24 { margin-top: 24px; }
+.center { justify-content: center; }
+.measure-58 { max-width: 58ch; }
+
+/* The icon sprite is markup, not something to see. */
+.icon-sprite { position: absolute; }
+
+/* --------------------------------------------------------------------------
+   TYPE COMPONENTS
+   -------------------------------------------------------------------------- */
+.sec-title {
+  font-size: var(--step-3);
+  max-width: 21ch;
+}
+.sec-title--wide { max-width: 27ch; }
+.sec-title em { font-style: normal; color: var(--green-ink); }
+.band--cta .sec-title em,
+.band--deep .sec-title em { color: var(--green); }
+
+.lead {
+  font-size: var(--step-1);
+  line-height: 1.75;
+  max-width: var(--measure);
+  color: var(--muted);
+}
+.lead strong { color: var(--navy); font-weight: 700; }
+.lead em { font-style: italic; }
+
+.band--cta .lead { font-size: 18px; color: rgba(226, 238, 252, .82); }
+.band--cta .lead strong { color: #fff; }
+
+/* The small uppercase label a row or card is headed with. */
+.compare-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: var(--r);
+  line-height: 1.3;
+}
+.tag-neutral { background: var(--grey-soft); color: var(--grey-ink); }
+.tag-green { background: var(--tint-green); color: var(--green-ink); }
+.tag-blue { background: var(--tint-blue); color: var(--blue); }
+
+/* Navy bold on a 3px green rule, painted as a background rather than an
+   underline so it sits tight under the type and wraps across lines. */
+.phrase {
+  font-weight: 700;
+  color: var(--navy);
+  background-image: linear-gradient(var(--green), var(--green));
+  background-size: 100% 3px;
+  background-position: 0 calc(100% - 1px);
+  background-repeat: no-repeat;
+  padding-bottom: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   BUTTONS
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  height: 54px;
+  padding-inline: 26px;
+  border-radius: var(--r);
+  border: 1.5px solid transparent;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform .25s var(--ease), background-color .25s ease,
+              border-color .25s ease, box-shadow .25s ease, color .25s ease;
+}
+.btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+.btn:active { transform: translateY(-1px); }
+
+.btn--solid {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+.btn--solid:hover { filter: brightness(1.04); }
+
+.band--cta .btn--solid {
+  height: 58px;
+  padding-inline: 36px;
+  box-shadow: 0 1px 2px rgba(20, 40, 80, .14);
+}
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 14px; }
+
+/* Below 380px the label is allowed to wrap and the fixed height becomes a
+   floor, so the button can never be wider than the viewport. */
+@media (max-width: 380px) {
+  .btn {
+    white-space: normal;
+    height: auto;
+    min-height: 54px;
+    padding-block: 15px;
+    text-align: center;
+  }
+}
+
+.icon { flex: none; }
+
+/* --------------------------------------------------------------------------
+   HERO
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: min(76vh, 620px);
+  padding-block: clamp(56px, 6vw, 84px);
+  /* No rule at the foot and no flat white: the ground runs down into the tint
+     so the deep band under it starts on a settled colour. */
+  background: linear-gradient(180deg,
+    var(--white) 0%,
+    var(--white) 56%,
+    var(--band-tint) 100%);
+}
+
+/* ---------- the ground: washes of brand colour, each on its own heading ---- */
+.hero-wash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  block-size: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: linear-gradient(180deg, #000 0, #000 52%, transparent 88%);
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 52%, transparent 88%);
+}
+.hero-wash span {
+  position: absolute;
+  left: 50%;
+  will-change: transform;
+}
+/* green: opens top-left over the headline and runs down to the right */
+.hero-wash__g {
+  inline-size: max(1015px, 53.4vw);
+  block-size: 830px;
+  margin-left: min(-987px, -51.9vw);
+  top: -315px;
+  background: radial-gradient(closest-side ellipse at center, rgba(128, 195, 74, .24), rgba(128, 195, 74, 0) 100%);
+  animation: washG 71s linear infinite;
+}
+/* brand blue: opens top-right and runs the other way */
+.hero-wash__b {
+  inline-size: max(1090px, 57.4vw);
+  block-size: 910px;
+  margin-left: min(-75px, -3.9vw);
+  top: -295px;
+  background: radial-gradient(closest-side ellipse at center, rgba(18, 102, 181, .21), rgba(18, 102, 181, 0) 100%);
+  animation: washB 97s linear infinite;
+}
+/* sky: the low one, parked under the call. Slowest and widest. */
+.hero-wash__s {
+  inline-size: max(1170px, 61.6vw);
+  block-size: 860px;
+  margin-left: min(-545px, -28.7vw);
+  top: 200px;
+  background: radial-gradient(closest-side ellipse at center, rgba(46, 140, 214, .21), rgba(46, 140, 214, 0) 100%);
+  animation: washS 127s linear infinite;
+}
+/* A sheen crossing the surface, the way light moves over one. */
+.hero-wash::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(102deg,
+    rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, .34) 50%, rgba(255, 255, 255, 0) 70%);
+  background-repeat: no-repeat;
+  background-size: 260% 100%;
+  animation: heroSheen 47s ease-in-out infinite;
+}
+
+@keyframes washG {
+  0%   { transform: translate3d(0, 0, 0); }
+  25%  { transform: translate3d(0, 22%, 0); }
+  50%  { transform: translate3d(0, 6%, 0); }
+  75%  { transform: translate3d(0, -14%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+@keyframes washB {
+  0%   { transform: translate3d(0, 0, 0); }
+  25%  { transform: translate3d(0, 26%, 0); }
+  50%  { transform: translate3d(0, -8%, 0); }
+  75%  { transform: translate3d(0, -24%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+@keyframes washS {
+  0%   { transform: translate3d(0, 0, 0); }
+  25%  { transform: translate3d(0, -18%, 0); }
+  50%  { transform: translate3d(0, 10%, 0); }
+  75%  { transform: translate3d(0, 20%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+@keyframes heroSheen {
+  0%, 100% { background-position: 124% 0; }
+  50%      { background-position: -24% 0; }
+}
+
+/* Copy on the left, the year beside it. */
+.hero-inner {
+  position: relative;
+  text-align: left;
+}
+.cw-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+  gap: clamp(36px, 4.6vw, 60px);
+  align-items: center;
+  width: 100%;
+}
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.hero h1 {
+  font-size: clamp(32px, 4.2vw, 48px);
+  line-height: 1.12;
+  letter-spacing: -.8px;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+.hero h1 .accent { color: var(--green-ink); }
+
+/* The one-line promise under the headline: a step below it, still navy. */
+.hero-deck {
+  font-size: clamp(18px, 1.5vw, 20px);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -.012em;
+  max-width: 36ch;
+  color: var(--navy);
+}
+
+.hero-sub {
+  font-size: 17px;
+  line-height: 1.7;
+  font-weight: 500;
+  max-width: 52ch;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+.hero .btn-row { margin-top: 8px; }
+
+/* the line under the hero's button */
+.hero-note {
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--faint);
+}
+
+/* Staged entrance: each block lifts in on its own delay. `backwards` drops the
+   fill afterwards so hover states still win. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-hero-anim="on"] .hero h1,
+  [data-hero-anim="on"] .hero-deck,
+  [data-hero-anim="on"] .hero-sub,
+  [data-hero-anim="on"] .hero .btn-row,
+  [data-hero-anim="on"] .hero-note,
+  [data-hero-anim="on"] .year-wrap { animation: hero-in .8s var(--ease) backwards; }
+  [data-hero-anim="on"] .hero h1 { animation-delay: .06s; }
+  [data-hero-anim="on"] .hero-deck { animation-delay: .2s; }
+  [data-hero-anim="on"] .hero-sub { animation-delay: .32s; }
+  [data-hero-anim="on"] .hero .btn-row { animation-delay: .54s; }
+  [data-hero-anim="on"] .hero-note { animation-delay: .66s; }
+  /* the year comes in with the headline — it is the other half of the fold */
+  [data-hero-anim="on"] .year-wrap { animation-delay: .18s; }
+
+  @media (min-width: 640px) {
+    [data-hero-anim="on"] .hero h1 .accent {
+      display: inline-block;
+      animation: hero-in .8s var(--ease) .34s backwards;
+    }
+  }
+
+  /* the twelve tiles land in reading order, a beat apart */
+  [data-hero-anim="on"] .mo { animation: card-rise .6s var(--ease) backwards; }
+  [data-hero-anim="on"] .mo:nth-child(1)  { animation-delay: .30s; }
+  [data-hero-anim="on"] .mo:nth-child(2)  { animation-delay: .35s; }
+  [data-hero-anim="on"] .mo:nth-child(3)  { animation-delay: .40s; }
+  [data-hero-anim="on"] .mo:nth-child(4)  { animation-delay: .45s; }
+  [data-hero-anim="on"] .mo:nth-child(5)  { animation-delay: .50s; }
+  [data-hero-anim="on"] .mo:nth-child(6)  { animation-delay: .55s; }
+  [data-hero-anim="on"] .mo:nth-child(7)  { animation-delay: .60s; }
+  [data-hero-anim="on"] .mo:nth-child(8)  { animation-delay: .65s; }
+  [data-hero-anim="on"] .mo:nth-child(9)  { animation-delay: .70s; }
+  [data-hero-anim="on"] .mo:nth-child(10) { animation-delay: .75s; }
+  [data-hero-anim="on"] .mo:nth-child(11) { animation-delay: .80s; }
+  [data-hero-anim="on"] .mo:nth-child(12) { animation-delay: .85s; }
+}
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(14px); }
+}
+
+/* --------------------------------------------------------------------------
+   THE YEAR — twelve pages, one reviewed and improved each month
+   A 4×3 grid of small page tiles on the card recipe. January is done and
+   carries the check; February is the one in hand and carries a live dot; the
+   rest wait. Each tile lifts and takes the green rule under the cursor.
+   -------------------------------------------------------------------------- */
+.year-wrap {
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+}
+.year {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mo {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  aspect-ratio: 4 / 5;
+  padding: 12px 12px 11px;
+  border-radius: var(--r);
+  background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
+  box-shadow: 0 1px 3px rgba(20, 40, 80, .07), 0 12px 28px rgba(20, 40, 80, .10);
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.mo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  z-index: 3;
+  block-size: 3px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .45s var(--ease);
+}
+.mo:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1px 3px rgba(20, 40, 80, .08), 0 20px 40px rgba(20, 40, 80, .16);
+}
+.mo:hover::before { transform: scaleX(1); }
+
+.mo-label {
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--faint);
+  transition: color .35s var(--ease);
+}
+.mo:hover .mo-label { color: var(--navy); }
+
+/* A wireframe of the page, not a screenshot: at this stage it is still a plan. */
+.mo-wire {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+}
+.mo-wire i {
+  display: block;
+  block-size: 4px;
+  border-radius: 1px;
+  background: var(--chip-blue);
+  opacity: .6;
+}
+.mo-wire i:nth-child(1) { block-size: 9px; inline-size: 58%; background: var(--navy); opacity: .28; }
+.mo-wire i:nth-child(3) { inline-size: 82%; }
+.mo-wire i:nth-child(4) { inline-size: 64%; }
+
+/* ---- done: January, rule drawn, check on ---- */
+.mo--done {
+  background: linear-gradient(180deg, var(--white), var(--tint-green));
+  box-shadow: 0 1px 3px rgba(92, 154, 46, .12), 0 12px 28px rgba(92, 154, 46, .16);
+}
+.mo--done::before { transform: scaleX(1); }
+.mo--done .mo-label { color: var(--green-ink); }
+.mo--done .mo-wire i { background: var(--green); opacity: .55; }
+.mo--done .mo-wire i:nth-child(1) { background: var(--green-ink); opacity: 1; }
+
+.mo-check {
+  position: absolute;
+  right: 9px;
+  top: 10px;
+  display: grid;
+  place-items: center;
+  inline-size: 20px;
+  block-size: 20px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(92, 154, 46, .38);
+}
+.mo-check svg { inline-size: 11px; block-size: 11px; }
+
+/* ---- next: February, the one in hand ---- */
+.mo--next .mo-label { color: var(--blue); }
+.mo-dot {
+  position: absolute;
+  right: 13px;
+  top: 14px;
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+  box-shadow: 0 0 0 0 rgba(18, 102, 181, .5);
+  animation: dot-pulse 2.6s ease-out .8s infinite;
+}
+@keyframes dot-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(18, 102, 181, .5); }
+  70%  { box-shadow: 0 0 0 7px rgba(18, 102, 181, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(18, 102, 181, 0); }
+}
+
+/* The done page's lines redraw themselves on a slow clock — the work in the
+   tile is the work that keeps happening. */
+@media (prefers-reduced-motion: no-preference) {
+  .mo--done .mo-wire i { animation: wire-draw 12s var(--ease) infinite; }
+  .mo--done .mo-wire i:nth-child(1) { --at: 1; }
+  .mo--done .mo-wire i:nth-child(2) { --at: .55; animation-delay: -11.6s; }
+  .mo--done .mo-wire i:nth-child(3) { --at: .55; animation-delay: -11.2s; }
+  .mo--done .mo-wire i:nth-child(4) { --at: .55; animation-delay: -10.8s; }
+  .mo--done:hover .mo-wire i { animation-play-state: paused; }
+}
+@keyframes wire-draw {
+  0%       { opacity: 0; transform: translateY(3px); }
+  8%, 100% { opacity: var(--at, .6); transform: translateY(0); }
+}
+
+.year-cap {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--faint);
+}
+.year-cap strong { color: var(--navy); font-weight: 700; }
+
+@media (max-width: 900px) {
+  .cw-hero { grid-template-columns: minmax(0, 1fr); }
+  .year-wrap { max-width: 400px; margin-inline: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   NEVER FINISHED — the changelog
+   The copy holds the left of the deep band; on the right, a month of changes
+   to one site rolls past behind a frame. Pointing at it stops the roll.
+   -------------------------------------------------------------------------- */
+.nf-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: clamp(36px, 5vw, 72px);
+  align-items: center;
+}
+.nf-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.ticker { width: 100%; }
+.ticker-frame {
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: var(--r);
+  background: rgba(255, 255, 255, .04);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .22);
+  overflow: hidden;
+}
+.ticker-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(226, 238, 252, .78);
+}
+.ticker-head__r {
+  margin-left: auto;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: none;
+  color: rgba(226, 238, 252, .55);
+}
+.ticker-live {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: live-pulse 2.4s ease-out infinite;
+}
+@keyframes live-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(128, 195, 74, .55); }
+  70%  { box-shadow: 0 0 0 7px rgba(128, 195, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(128, 195, 74, 0); }
+}
+
+.ticker-view {
+  position: relative;
+  height: 21rem;
+  overflow: hidden;
+  mask-image: linear-gradient(180deg, transparent 0, #000 10%, #000 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 10%, #000 88%, transparent 100%);
+}
+.ticker-list {
+  animation: tickscroll 44s linear infinite;
+}
+.ticker:hover .ticker-list,
+.ticker:focus-within .ticker-list { animation-play-state: paused; }
+@keyframes tickscroll {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
+.t-row {
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  transition: background-color .3s var(--ease);
+}
+.t-row:hover { background: rgba(255, 255, 255, .05); }
+.t-time {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: rgba(226, 238, 252, .55);
+  font-variant-numeric: tabular-nums;
+}
+.t-act {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #eef4fb;
+}
+.t-act svg { flex: none; inline-size: 14px; block-size: 14px; color: #ff9b6b; }
+.t-tag {
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 100px;
+  border: 1px solid;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.t-fix  { color: #ffb08a; border-color: rgba(255, 176, 138, .45); }
+.t-seo  { color: #9fd7ff; border-color: rgba(159, 215, 255, .45); }
+.t-con  { color: #b6ecff; border-color: rgba(182, 236, 255, .4); }
+.t-lau  { color: #b8e893; border-color: rgba(184, 232, 147, .5); }
+.t-des  { color: #e4c9ff; border-color: rgba(228, 201, 255, .45); }
+.t-int  { color: #ffd88a; border-color: rgba(255, 216, 138, .45); }
+.t-ins  { color: #a5f0c9; border-color: rgba(165, 240, 201, .45); }
+.t-heat { color: #ff9b6b; border-color: rgba(255, 155, 107, .5); }
+
+.ticker-cap {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  color: rgba(226, 238, 252, .55);
+}
+
+@media (max-width: 900px) {
+  .nf-split { grid-template-columns: minmax(0, 1fr); align-items: start; }
+  .ticker-view { height: 18rem; }
+}
+@media (max-width: 480px) {
+  .t-row { grid-template-columns: 4.25rem minmax(0, 1fr) auto; gap: 10px; padding-inline: 12px; }
+  .t-act { font-size: 14px; }
+  .ticker-head__r { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   HOURS NEEDED — four tiers in one card
+   The rows read as a list on the card recipe; each carries its range as a
+   bar, and the anchor row — the one most businesses sit in — is ruled green.
+   -------------------------------------------------------------------------- */
+.tiers {
+  width: 100%;
+  max-width: 880px;
+  margin-top: 10px;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
+  box-shadow: var(--shadow-card);
+}
+.tier {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  padding: 22px clamp(22px, 2.6vw, 32px);
+  border-top: 1px solid var(--border-soft);
+  transition: background-color .35s var(--ease);
+}
+.tier:first-child { border-top: 0; }
+.tier:hover { background: var(--tint-blue); }
+
+.tier-txt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.tier-lab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font-size: var(--step-1);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--navy);
+  transition: transform .35s var(--ease);
+}
+.tier:hover .tier-lab { transform: translateX(4px); }
+.tier-hrs {
+  flex: none;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  color: var(--navy);
+}
+
+.tier-bar {
+  block-size: 8px;
+  border-radius: 100px;
+  background: var(--grey-soft);
+  overflow: hidden;
+}
+.tier-bar i {
+  display: block;
+  block-size: 100%;
+  inline-size: var(--w, 50%);
+  border-radius: 100px;
+  background: var(--blue);
+  transform-origin: left;
+}
+
+/* the anchor: green rule down the left, green bar, green figure */
+.tier--anchor::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  inline-size: 4px;
+  background: var(--green);
+}
+.tier--anchor .tier-bar i { background: var(--green); }
+.tier--anchor .tier-hrs { color: var(--green-ink); }
+.tier--anchor:hover { background: var(--tint-green); }
+
+/* The bars draw in the first time the card is read, one after the other. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-anim="on"] .tiers .tier-bar i { transform: scaleX(0); }
+  [data-anim="on"] .tiers.is-revealed .tier-bar i { animation: rule-draw .9s var(--ease) forwards; }
+  [data-anim="on"] .tiers.is-revealed .tier:nth-child(1) .tier-bar i { animation-delay: .15s; }
+  [data-anim="on"] .tiers.is-revealed .tier:nth-child(2) .tier-bar i { animation-delay: .27s; }
+  [data-anim="on"] .tiers.is-revealed .tier:nth-child(3) .tier-bar i { animation-delay: .39s; }
+  [data-anim="on"] .tiers.is-revealed .tier:nth-child(4) .tier-bar i { animation-delay: .51s; }
+}
+
+@media (max-width: 560px) {
+  .tier-txt { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .tier-hrs { font-size: 17px; }
+}
+
+/* --------------------------------------------------------------------------
+   TWO WAYS — the program cards
+   Support, then Evolution: two cards that read left to right, blue then green,
+   the same shell and 3px accent the reference gives its pairs.
+   -------------------------------------------------------------------------- */
+.plans {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+}
+.plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: clamp(26px, 3vw, 36px);
+  border-radius: var(--r);
+  border-top: 3px solid var(--border-soft);
+  background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
+  box-shadow: var(--shadow-card);
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.plan::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  inset-inline: 0;
+  block-size: 3px;
+  background: var(--blue);
+  transform-origin: left;
+}
+.plan--evo::before { background: var(--green); }
+.plan:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-card), 0 22px 44px rgba(20, 40, 80, .13);
+}
+
+/* the mark, in a disc that fills with the lane's colour under the cursor */
+.plan-mark {
+  display: grid;
+  place-items: center;
+  inline-size: 46px;
+  block-size: 46px;
+  border-radius: 50%;
+  margin-bottom: 2px;
+  background: var(--tint-blue);
+  color: var(--blue);
+  transition: background-color .4s var(--ease), color .4s var(--ease),
+              transform .4s var(--ease), box-shadow .4s var(--ease);
+}
+.plan-mark svg { inline-size: 24px; block-size: 24px; }
+.plan--evo .plan-mark { background: var(--tint-green); color: var(--green-ink); }
+.plan:hover .plan-mark {
+  transform: scale(1.07);
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(18, 102, 181, .32);
+}
+.plan--evo:hover .plan-mark {
+  background: var(--green);
+  color: #14300a;
+  box-shadow: 0 8px 20px rgba(128, 195, 74, .38);
+}
+
+.plan-tag {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: var(--r);
+  background: var(--tint-blue);
+  color: var(--blue);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.plan:hover .plan-tag { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(20, 40, 80, .12); }
+.plan--evo .plan-tag { background: var(--tint-green); color: var(--green-ink); }
+
+.plan h3 { font-size: clamp(21px, 1.9vw, 25px); line-height: 1.25; letter-spacing: -.019em; }
+.plan p { font-size: var(--step-1); line-height: 1.7; color: var(--muted); }
+
+/* the line that closes the Evolution card */
+.plan-min {
+  margin-top: auto;
+  padding-top: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--green-ink);
+}
+
+/* the footnote under the pair, on the tint */
+.note {
+  width: 100%;
+  margin-top: 6px;
+  padding: 20px 24px;
+  border-radius: var(--r);
+  background: var(--tint-blue);
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--navy);
+}
+.note strong { font-weight: 700; }
+
+/* The cards arrive in sequence — .28s apart, so the second reads as following
+   the first — and their rules draw one after the other. At rest the rule is
+   simply painted, so a visitor without the script sees the finished card. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-anim="on"] .plans .plan { opacity: 0; }
+  [data-anim="on"] .plans.is-revealed .plan {
+    opacity: 1;
+    animation: card-rise .62s var(--ease) backwards;
+  }
+  [data-anim="on"] .plans.is-revealed .plan:nth-child(1) { animation-delay: .08s; }
+  [data-anim="on"] .plans.is-revealed .plan:nth-child(2) { animation-delay: .36s; }
+
+  [data-anim="on"] .plans .plan::before { transform: scaleX(0); }
+  [data-anim="on"] .plans.is-revealed .plan::before {
+    animation: rule-draw .5s var(--ease) forwards;
+  }
+  [data-anim="on"] .plans.is-revealed .plan:nth-child(1)::before { animation-delay: .34s; }
+  [data-anim="on"] .plans.is-revealed .plan:nth-child(2)::before { animation-delay: .62s; }
+
+  [data-anim="on"] .plans.is-revealed .plan-tag { animation: tag-in .5s var(--ease) backwards; }
+  [data-anim="on"] .plans.is-revealed .plan:nth-child(1) .plan-tag { animation-delay: .42s; }
+  [data-anim="on"] .plans.is-revealed .plan:nth-child(2) .plan-tag { animation-delay: .70s; }
+
+  [data-anim="on"] .plans.is-revealed .plan-mark { animation: mark-in .55s var(--ease) backwards; }
+  [data-anim="on"] .plans.is-revealed .plan:nth-child(1) .plan-mark { animation-delay: .30s; }
+  [data-anim="on"] .plans.is-revealed .plan:nth-child(2) .plan-mark { animation-delay: .58s; }
+
+  /* the phrase in the Evolution card rules itself in once the card has landed */
+  [data-anim="on"] .plans .phrase { background-size: 0 3px; }
+  [data-anim="on"] .plans.is-revealed .phrase { animation: phrase-in .5s var(--ease) .9s forwards; }
+}
+
+@keyframes card-rise {
+  from { opacity: 0; transform: translateY(18px); }
+}
+@keyframes rule-draw {
+  to { transform: scaleX(1); }
+}
+@keyframes tag-in {
+  from { opacity: 0; transform: translateY(-6px); }
+}
+@keyframes mark-in {
+  from { opacity: 0; transform: scale(.72); }
+}
+@keyframes phrase-in {
+  to { background-size: 100% 3px; }
+}
+
+@media (max-width: 900px) {
+  .plans { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --------------------------------------------------------------------------
+   CLOSING CTA
+   -------------------------------------------------------------------------- */
+.final { text-align: center; }
+.final .wrap { max-width: 1340px; }
+.final .stack { align-items: center; }
+.final .lead { margin-inline: auto; }
+
+/* Held on a single line while it can be; below 560px it is allowed to wrap. */
+.final .sec-title {
+  max-width: none;
+  white-space: nowrap;
+  font-size: clamp(19px, 3.1vw, 38px);
+}
+@media (max-width: 560px) {
+  .final .sec-title {
+    white-space: normal;
+    font-size: var(--step-3);
+    max-width: 23ch;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   REVEAL
+   -------------------------------------------------------------------------- */
+[data-anim="on"] .reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .7s var(--ease), transform .7s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+[data-anim="on"] .reveal.is-revealed { opacity: 1; transform: none; }
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .btn-row { width: 100%; }
+  .btn-row .btn { flex: 1 1 100%; }
+}
+
+/* --------------------------------------------------------------------------
+   REDUCED MOTION
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-anim="on"] .reveal { opacity: 1; transform: none; }
+
+  /* The blanket rule would snap the changelog to its end frame, so stop it
+     outright and hand the list to the reader as a scrollable strip. */
+  .ticker-list { animation: none !important; transform: none !important; }
+  .ticker-view {
+    overflow-y: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .mo-wire i { opacity: .6; }
+  .mo--done .mo-wire i { opacity: .55; }
+  .mo--done .mo-wire i:nth-child(1) { opacity: 1; }
+  .mo:hover,
+  .plan:hover { transform: none; }
+}
+
+@media print {
+  .band { padding-block: 24px; }
+  [data-anim="on"] .reveal { opacity: 1; transform: none; }
+  .hero-wash { display: none; }
+}

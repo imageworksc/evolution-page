@@ -1,0 +1,8 @@
+# The earlier Bootstrap comp this page was rebuilt from. Kept locally for
+# reference; index.html supersedes it and Pages should serve only the new page.
+website-support-evolution.html
+
+# editor / OS noise
+.DS_Store
+Thumbs.db
+.vscode/

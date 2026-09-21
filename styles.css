@@ -12,7 +12,7 @@
      5. Type components
      6. Buttons
      7. Hero
-     8. The year — the hero figure
+     8. The calendar — the hero figure
      9. Changelog — the deep band
     10. Hour tiers
     11. Program cards
@@ -549,13 +549,22 @@ a { color: inherit; }
 
 /* --------------------------------------------------------------------------
    8. THE CALENDAR — twelve months, one core page improved in each
-   A year-at-a-glance card: a header with the running count and a twelve-
-   segment track, then the months in a 4×3 grid, each holding a small
-   wireframe of its page. The script checks the months off one after another
-   (.is-done), keeps the one in hand marked (.is-now), and holds the run while
-   the pointer is on the card. Under the cursor a month lifts and draws its
+   A year-at-a-glance card. The header names the month in hand and the page
+   it is spent on, with a ring that fills as the year is worked through. The
+   months sit in a 4×3 grid on a tinted panel, each a small white leaf: the
+   month, the page it is for, and a grid of its days. The script checks the
+   months off one after another (.is-done), keeps the one in hand marked
+   (.is-now) with its days filling in week by week, and holds the run while
+   the pointer is on the card. Under the cursor a month lifts and stamps its
    check with the same motion, whether the run has reached it or not.
    -------------------------------------------------------------------------- */
+/* Registered so the colour of the days can transition rather than snap. */
+@property --dot {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
 .cal-wrap {
   width: 100%;
   max-width: 28.75rem;
@@ -565,7 +574,7 @@ a { color: inherit; }
 /* ---- the card ---- */
 .cal {
   position: relative;
-  padding: 1rem 1rem 1.0625rem;
+  padding: 1.125rem 1.125rem 1.125rem;
   border-radius: var(--r);
   border-top: .1875rem solid var(--green);
   background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
@@ -577,81 +586,146 @@ a { color: inherit; }
   box-shadow: var(--shadow-card), 0 1.375rem 2.75rem rgba(20, 40, 80, .13);
 }
 
-/* ---- header: the name of the run and how far it has got ---- */
+/* ---- header: the month in hand, and how far the year has got ---- */
 .cal-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: .75rem;
-  margin-bottom: .625rem;
+  gap: .875rem;
+  margin-bottom: .875rem;
 }
-.cal-title {
+.cal-head__l {
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+  min-width: 0;
+}
+.cal-eyebrow {
   display: inline-flex;
   align-items: center;
   gap: .5rem;
-  font-size: .6875rem;
+  font-size: .625rem;
   font-weight: 800;
-  letter-spacing: .14em;
+  letter-spacing: .16em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: var(--navy);
+  color: var(--faint);
 }
 .cal-live {
-  inline-size: .5rem;
-  block-size: .5rem;
+  inline-size: .4375rem;
+  block-size: .4375rem;
   border-radius: 50%;
   background: var(--green);
   animation: live-pulse 2.4s ease-out infinite;
 }
-.cal-count {
-  font-size: .75rem;
+/* "February · Services page": the month at the body size, bold, then the page */
+.cal-now {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: .8125rem;
   font-weight: 600;
+  line-height: 1.3;
+  color: var(--muted);
+}
+.cal-now b {
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: var(--navy);
+  transition: color .3s var(--ease);
+}
+.cal-now b::after {
+  content: '·';
+  margin-inline: .4em;
+  font-weight: 800;
+  color: var(--green);
+}
+/* the whole year done: the month slot carries the closing line instead */
+.cal[data-done="12"] .cal-now b { color: var(--green-ink); }
+
+/* the ring: one turn for the year, drawn as the months are done */
+.cal-ring {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  inline-size: 3.25rem;
+  block-size: 3.25rem;
+}
+.cal-ring svg {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  transform: rotate(-90deg);
+}
+.cal-ring circle {
+  fill: none;
+  stroke-width: 3.5;
+}
+.cal-ring__t { stroke: var(--grey-soft); }
+.cal-ring__v {
+  stroke: var(--green);
+  stroke-linecap: round;
+  stroke-dasharray: 125.66;          /* 2π · r20 */
+  stroke-dashoffset: 125.66;
+  transition: stroke-dashoffset .7s var(--ease);
+}
+.cal-ring__n {
+  position: relative;
+  font-size: .6875rem;
+  font-weight: 700;
+  line-height: 1;
   color: var(--faint);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
 }
-.cal-count b {
-  font-size: 1rem;
+.cal-ring__n b {
+  font-size: .9375rem;
   font-weight: 800;
-  color: var(--green-ink);
+  color: var(--navy);
   letter-spacing: -.02em;
 }
+/* the ring's fill, one stop per month, read off the card's data-done */
+.cal[data-done="1"]  .cal-ring__v { stroke-dashoffset: 115.19; }
+.cal[data-done="2"]  .cal-ring__v { stroke-dashoffset: 104.72; }
+.cal[data-done="3"]  .cal-ring__v { stroke-dashoffset: 94.25; }
+.cal[data-done="4"]  .cal-ring__v { stroke-dashoffset: 83.78; }
+.cal[data-done="5"]  .cal-ring__v { stroke-dashoffset: 73.30; }
+.cal[data-done="6"]  .cal-ring__v { stroke-dashoffset: 62.83; }
+.cal[data-done="7"]  .cal-ring__v { stroke-dashoffset: 52.36; }
+.cal[data-done="8"]  .cal-ring__v { stroke-dashoffset: 41.89; }
+.cal[data-done="9"]  .cal-ring__v { stroke-dashoffset: 31.42; }
+.cal[data-done="10"] .cal-ring__v { stroke-dashoffset: 20.94; }
+.cal[data-done="11"] .cal-ring__v { stroke-dashoffset: 10.47; }
+.cal[data-done="12"] .cal-ring__v { stroke-dashoffset: 0; }
+.cal[data-done="12"] .cal-ring__n b { color: var(--green-ink); }
 
-/* the track: one segment a month, lit as the month is done */
-.cal-track {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: .1875rem;
-  margin-bottom: .875rem;
-}
-.cal-track i {
-  display: block;
-  block-size: .25rem;
-  border-radius: 999px;
-  background: var(--grey-soft);
-  transition: background-color .35s var(--ease);
-}
-.cal-track i.on { background: var(--green); }
-
-/* ---- the months ---- */
+/* ---- the months, on a tinted panel so the leaves read as leaves ---- */
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: .5rem;
+  padding: .5rem;
+  border-radius: var(--r);
+  background: var(--band-tint);
+  box-shadow: inset 0 1px 0 rgba(20, 60, 102, .05);
 }
 .cal-m {
   position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: .375rem;
-  aspect-ratio: 6 / 5;
+  gap: .1875rem;
+  /* the ratio sets the leaf where there is room; where there is not, the
+     automatic minimum lets it grow to its content instead of clipping it */
+  aspect-ratio: 5 / 4.6;
   padding: .5625rem .625rem .5rem;
   border-radius: var(--r);
-  border: 1px solid var(--border-soft);
-  background: var(--white);
+  background: linear-gradient(180deg, var(--card-top), var(--card-bottom));
+  box-shadow: 0 1px .125rem rgba(20, 40, 80, .06), 0 .375rem .875rem rgba(20, 40, 80, .07);
   transition: transform .35s var(--ease), box-shadow .35s var(--ease),
-              background-color .4s var(--ease), border-color .4s var(--ease);
+              background-color .4s var(--ease);
 }
 /* the green rule on the top edge: drawn when the month is done, and under
    the cursor before that */
@@ -668,8 +742,7 @@ a { color: inherit; }
 }
 .cal-m:hover {
   transform: translateY(-.1875rem);
-  border-color: transparent;
-  box-shadow: 0 .0625rem .1875rem rgba(20, 40, 80, .06), 0 .75rem 1.5rem rgba(20, 40, 80, .12);
+  box-shadow: 0 1px .125rem rgba(20, 40, 80, .06), 0 .875rem 1.625rem rgba(20, 40, 80, .14);
 }
 .cal-m:hover::before,
 .cal-m.is-done::before { transform: scaleX(1); }
@@ -682,26 +755,44 @@ a { color: inherit; }
   color: var(--faint);
   transition: color .35s var(--ease);
 }
+/* the page this month is spent on */
+.cal-m__pg {
+  font-size: .625rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--navy);
+  transition: color .35s var(--ease);
+}
 
-/* A wireframe of the page, not a screenshot: a title bar and two lines. */
-.cal-m__p {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: .25rem;
-}
-.cal-m__p i {
+/* The days: a 7×4 field of dots drawn as a background, so a month is one
+   element however many days it has. A second, coloured field sits over it
+   and is revealed top to bottom as the month passes. */
+.cal-m__days {
+  --dot: rgba(20, 60, 102, .16);
+  position: relative;
   display: block;
-  block-size: .1875rem;
-  border-radius: 1px;
-  background: var(--chip-blue);
-  opacity: .7;
-  transition: background-color .4s var(--ease), opacity .4s var(--ease);
+  margin-top: auto;
+  inline-size: 100%;
+  block-size: 1.625rem;
+  /* seven columns for the days of the week, four rows for the weeks; each
+     dot sits in the middle of its own tile so the field fills the leaf */
+  background-image: radial-gradient(circle at center, var(--dot) .075rem, transparent .12rem);
+  background-size: calc(100% / 7) calc(100% / 4);
+  transition: --dot .4s;
 }
-.cal-m__p i:nth-child(1) { block-size: .4375rem; inline-size: 56%; background: var(--navy); opacity: .22; }
-.cal-m__p i:nth-child(2) { inline-size: 88%; }
-.cal-m__p i:nth-child(3) { inline-size: 64%; }
+.cal-m__days::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at center, var(--blue) .075rem, transparent .12rem);
+  background-size: calc(100% / 7) calc(100% / 4);
+  /* hidden from the bottom up; the month in hand uncovers it a week at a time */
+  clip-path: inset(0 0 100% 0);
+}
 
 /* ---- the check: a disc that pops and a tick that draws itself ---- */
 .cal-m__ck {
@@ -749,20 +840,20 @@ a { color: inherit; }
 
 /* ---- states ---- */
 
-/* done: tinted green, lines in green, check on */
+/* done: tinted green, every day green, check on */
 .cal-m.is-done {
-  background: var(--tint-green);
-  border-color: rgba(128, 195, 74, .35);
+  background: linear-gradient(180deg, #f6fbef, var(--tint-green));
+  box-shadow: 0 1px .125rem rgba(92, 154, 46, .08), 0 .375rem .875rem rgba(92, 154, 46, .12);
 }
 .cal-m.is-done .cal-m__l { color: var(--green-ink); }
-.cal-m.is-done .cal-m__p i { background: var(--green); opacity: .55; }
-.cal-m.is-done .cal-m__p i:nth-child(1) { background: var(--green-ink); opacity: 1; }
+.cal-m.is-done .cal-m__pg { color: #2f5a14; }
+.cal-m.is-done .cal-m__days { --dot: var(--green); }
+.cal-m.is-done .cal-m__days::after { display: none; }
 
-/* in hand: blue label, the dot, and the page's lines being redrawn */
+/* in hand: blue label, the dot, and the days filling in a week at a time */
 .cal-m.is-now .cal-m__l { color: var(--blue); }
 .cal-m.is-now .cal-m__dot { opacity: 1; transform: scale(1); animation: dot-pulse 2.2s ease-out .3s infinite; }
-.cal-m.is-now .cal-m__p i { background: var(--blue); opacity: .45; }
-.cal-m.is-now .cal-m__p i:nth-child(1) { opacity: .8; }
+.cal-m.is-now .cal-m__days::after { clip-path: inset(0); }
 
 /* the check comes on for a done month and, as a preview, for the one under
    the cursor; either way the disc pops first and the tick draws after it */
@@ -770,12 +861,11 @@ a { color: inherit; }
 .cal-m:hover .cal-m__ck { opacity: 1; transform: scale(1); }
 .cal-m.is-done .cal-m__ck path,
 .cal-m:hover .cal-m__ck path { stroke-dashoffset: 0; }
-/* the dot yields to the check under the cursor */
+/* the dot yields to the check under the cursor, and the days go green */
 .cal-m:hover .cal-m__dot { opacity: 0; transform: scale(.5); animation: none; }
-.cal-m:hover .cal-m__l { color: var(--navy); }
-.cal-m.is-done:hover .cal-m__l { color: var(--green-ink); }
-.cal-m:not(.is-done):hover .cal-m__p i { background: var(--green); opacity: .55; }
-.cal-m:not(.is-done):hover .cal-m__p i:nth-child(1) { background: var(--green-ink); opacity: 1; }
+.cal-m:not(.is-done):hover .cal-m__l { color: var(--green-ink); }
+.cal-m:not(.is-done):hover .cal-m__days { --dot: var(--green); }
+.cal-m:not(.is-done):hover .cal-m__days::after { display: none; }
 
 @keyframes dot-pulse {
   0%   { box-shadow: 0 0 0 0 rgba(18, 102, 181, .5); }
@@ -784,26 +874,20 @@ a { color: inherit; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* the month in hand passes a week at a time: four steps across the field */
+  .cal-m.is-now .cal-m__days::after { animation: days-pass 1.4s steps(4, end) .15s both; }
   /* a month that is already done answers the cursor with a bounce of its check */
   .cal-m.is-done:hover .cal-m__ck { animation: check-bounce .5s var(--ease); }
-
-  /* the page in hand is being worked on: its lines redraw on a short loop */
-  .cal-m.is-now .cal-m__p i { animation: wire-draw 3.2s var(--ease) infinite; }
-  .cal-m.is-now .cal-m__p i:nth-child(1) { --at: .8; }
-  .cal-m.is-now .cal-m__p i:nth-child(2) { --at: .45; animation-delay: .25s; }
-  .cal-m.is-now .cal-m__p i:nth-child(3) { --at: .45; animation-delay: .5s; }
-  .cal-m.is-now:hover .cal-m__p i { animation: none; }
+}
+@keyframes days-pass {
+  from { clip-path: inset(0 0 100% 0); }
+  to   { clip-path: inset(0); }
 }
 @keyframes check-bounce {
   0%   { transform: scale(1); }
   35%  { transform: scale(1.28); }
   70%  { transform: scale(.94); }
   100% { transform: scale(1); }
-}
-@keyframes wire-draw {
-  0%       { opacity: 0; transform: translateY(.1875rem); }
-  18%, 78% { opacity: var(--at, .6); transform: translateY(0); }
-  100%     { opacity: 0; transform: translateY(-.125rem); }
 }
 
 .cal-cap {
@@ -1263,11 +1347,16 @@ a { color: inherit; }
   }
 }
 
-/* ≤ 480 — the changelog rows tighten */
+/* ≤ 480 — the changelog rows tighten; a month's page name may take two
+   lines rather than be cut short */
 @media (max-width: 480px) {
   .t-row { grid-template-columns: 4.25rem minmax(0, 1fr) auto; gap: .625rem; padding-inline: .75rem; }
   .t-act { font-size: .875rem; }
   .ticker-head__r { display: none; }
+
+  /* no fixed ratio here, so every leaf in a row stretches to the tallest */
+  .cal-m { aspect-ratio: auto; min-block-size: 4.75rem; padding-inline: .5rem; }
+  .cal-m__pg { white-space: normal; font-size: .5625rem; }
 }
 
 /* ≤ 380 — a button label may wrap and the fixed height becomes a floor, so
@@ -1282,11 +1371,11 @@ a { color: inherit; }
   }
 }
 
-/* ≤ 360 — three months to a row, so the cells keep room for their marks, and
-   the count drops its unit so the header holds on one line */
+/* ≤ 360 — three months to a row, so the leaves keep room for their marks, and
+   the header keeps only its eyebrow and ring */
 @media (max-width: 360px) {
   .cal-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .cal-count__u { display: none; }
+  .cal-now { display: none; }
 }
 
 /* --------------------------------------------------------------------------

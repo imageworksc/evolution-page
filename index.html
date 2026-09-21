@@ -106,30 +106,108 @@
       </div>
 
       <!-- The calendar: twelve months, one core page reviewed and improved in
-           each. The script checks the months off one after another and holds
-           the run while the pointer is on the card; the markup ships with
-           January done so the figure reads without it. Each month cell holds a
-           small wireframe of its page and takes a check when it is done. -->
+           each. The header names the month in hand and the page it is spent
+           on; the ring fills as the year is worked through. The script checks
+           the months off one after another and holds the run while the
+           pointer is on the card; the markup ships with January done and
+           February in hand so the figure reads without it. -->
       <div class="cal-wrap">
-        <div class="cal" data-calendar aria-hidden="true">
+        <div class="cal" data-calendar data-done="1" aria-hidden="true">
           <div class="cal-head">
-            <span class="cal-title"><span class="cal-live"></span>Evolution calendar</span>
-            <span class="cal-count"><b data-count>1</b> / 12 <span class="cal-count__u">pages</span></span>
+            <div class="cal-head__l">
+              <span class="cal-eyebrow"><i class="cal-live"></i>Evolution calendar</span>
+              <span class="cal-now"><b data-now-month>February</b><span data-now-page>Services page</span></span>
+            </div>
+            <div class="cal-ring">
+              <svg viewBox="0 0 48 48"><circle class="cal-ring__t" cx="24" cy="24" r="20"/><circle class="cal-ring__v" cx="24" cy="24" r="20"/></svg>
+              <span class="cal-ring__n"><b data-count>1</b>/12</span>
+            </div>
           </div>
-          <div class="cal-track"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <div class="cal-grid">
-            <div class="cal-m is-done"><span class="cal-m__l">Jan</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m is-now"><span class="cal-m__l">Feb</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Mar</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Apr</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">May</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Jun</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Jul</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Aug</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Sep</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Oct</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Nov</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
-            <div class="cal-m"><span class="cal-m__l">Dec</span><span class="cal-m__p"><i></i><i></i><i></i></span><span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span><span class="cal-m__dot"></span></div>
+            <div class="cal-m is-done" data-month="January" data-page="Home page">
+              <span class="cal-m__l">Jan</span>
+              <span class="cal-m__pg">Home</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m is-now" data-month="February" data-page="Services page">
+              <span class="cal-m__l">Feb</span>
+              <span class="cal-m__pg">Services</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="March" data-page="About page">
+              <span class="cal-m__l">Mar</span>
+              <span class="cal-m__pg">About</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="April" data-page="Contact page">
+              <span class="cal-m__l">Apr</span>
+              <span class="cal-m__pg">Contact</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="May" data-page="Pricing page">
+              <span class="cal-m__l">May</span>
+              <span class="cal-m__pg">Pricing</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="June" data-page="Case studies">
+              <span class="cal-m__l">Jun</span>
+              <span class="cal-m__pg">Case studies</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="July" data-page="Team page">
+              <span class="cal-m__l">Jul</span>
+              <span class="cal-m__pg">Team</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="August" data-page="Blog hub">
+              <span class="cal-m__l">Aug</span>
+              <span class="cal-m__pg">Blog</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="September" data-page="FAQ page">
+              <span class="cal-m__l">Sep</span>
+              <span class="cal-m__pg">FAQ</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="October" data-page="Careers page">
+              <span class="cal-m__l">Oct</span>
+              <span class="cal-m__pg">Careers</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="November" data-page="Locations page">
+              <span class="cal-m__l">Nov</span>
+              <span class="cal-m__pg">Locations</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
+            <div class="cal-m" data-month="December" data-page="Campaign landing page">
+              <span class="cal-m__l">Dec</span>
+              <span class="cal-m__pg">Landing page</span>
+              <span class="cal-m__days"></span>
+              <span class="cal-m__ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.5 4.5 8.5-9.5"/></svg></span>
+              <span class="cal-m__dot"></span>
+            </div>
           </div>
         </div>
         <p class="cal-cap"><strong>One core page a month,</strong> reviewed, improved, and checked off. Twelve by year's end.</p>

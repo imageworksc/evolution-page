@@ -99,8 +99,9 @@
     if (!cal) return;
 
     const months = [...cal.querySelectorAll('.cal-m')];
-    const ticks = [...cal.querySelectorAll('.cal-track i')];
     const count = cal.querySelector('[data-count]');
+    const nowMonth = cal.querySelector('[data-now-month]');
+    const nowPage = cal.querySelector('[data-now-page]');
     if (!months.length) return;
 
     const STEP = 1700;    // ms between one month and the next
@@ -114,13 +115,27 @@
     let timer = 0;
     let held = false;
 
+    // Everything the card shows follows from `done`: the leaves' states, the
+    // ring (read from data-done by the stylesheet), the count, and the header
+    // line naming the month in hand and its page. While the year rewinds the
+    // header keeps the closing line rather than flicking back through months.
     const paint = () => {
       months.forEach((m, i) => {
         m.classList.toggle('is-done', i < done);
         m.classList.toggle('is-now', !rewinding && i === done);
       });
-      ticks.forEach((t, i) => t.classList.toggle('on', i < done));
+      cal.dataset.done = String(done);
       if (count) count.textContent = String(done);
+
+      const current = months[done];
+      if (!nowMonth || !nowPage) return;
+      if (current && !rewinding) {
+        nowMonth.textContent = current.dataset.month ?? '';
+        nowPage.textContent = current.dataset.page ?? '';
+      } else if (done === months.length || rewinding) {
+        nowMonth.textContent = 'Year complete';
+        nowPage.textContent = 'Twelve pages improved';
+      }
     };
 
     if (reduced.matches) {
